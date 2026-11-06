@@ -1,1 +1,1 @@
-# Python standard library only.
+requests>=2.31,<3

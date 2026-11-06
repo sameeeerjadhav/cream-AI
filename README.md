@@ -37,3 +37,16 @@ python -m app.cli --get scheme-pmegp
 
 Create the local virtual environment with `python -m venv .venv` if needed.
 The environment is intentionally ignored by Git.
+
+## Day 3 data pipeline
+
+Install the downloader dependency and fetch the three official documents:
+
+```powershell
+python -m pip install -r requirements.txt
+python -m app.fetch
+python -m app.ingest
+```
+
+Documents are saved under `data/raw/`. The ingest step skips malformed files,
+reports the error, and writes cleaned records to `data/records.json`.
