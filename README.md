@@ -21,3 +21,19 @@ UdyamSathi helps users make informed decisions about government schemes. It does
 - Estimate subsidy, own contribution and bank finance.
 - Compare schemes and prepare document checklists.
 - Provide clear application guidance and official links.
+
+## Day 2 records CLI
+
+The sample dataset contains 20 records: 10 schemes, 3 MSME classification
+limits for 2025, and 7 PMEGP sub-rules. Use Python's standard library to
+explore them:
+
+```powershell
+python -m app.cli
+python -m app.cli --search subsidy
+python -m app.cli --count
+python -m app.cli --get scheme-pmegp
+```
+
+Create the local virtual environment with `python -m venv .venv` if needed.
+The environment is intentionally ignored by Git.
