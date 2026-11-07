@@ -15,7 +15,35 @@ def _text_from_html(raw_html: str) -> str:
     text = re.sub(r"<script\b[^>]*>.*?</script>", " ", raw_html, flags=re.I | re.S)
     text = re.sub(r"<style\b[^>]*>.*?</style>", " ", text, flags=re.I | re.S)
     text = re.sub(r"<[^>]+>", " ", text)
-    return re.sub(r"\s+", " ", unescape(text)).strip()
+    text = re.sub(r"\s+", " ", unescape(text)).strip()
+    return re.sub(r"(\d)\s+(st|nd|rd|th)\b", r"\1\2", text, flags=re.I)
+
+
+def _eligibility_from_text(text: str, source: str) -> str:
+    sections = {
+        "cmegp": (
+            r"6\)\s*Eligibility criteria under the scheme:",
+            r"7\)\s*Other Eligibility Conditions under CMEGP:",
+        ),
+        "pmegp": (r"Eligible Borrowers", r"Repayment Tenor"),
+    }
+    boundaries = sections.get(source)
+    if boundaries is None:
+        return "Eligibility details are not listed on the source page."
+
+    start, end = boundaries
+    match = re.search(
+        rf"{start}\s*(.*?)(?={end})",
+        text,
+        flags=re.I | re.S,
+    )
+    if match is None:
+        raise ValueError(f"eligibility section not found for {source}")
+
+    eligibility = re.sub(r"\s+", " ", match.group(1)).strip(" .")
+    if not eligibility:
+        raise ValueError(f"eligibility section is empty for {source}")
+    return eligibility
 
 
 def _record_from_document(path: Path) -> Record:
@@ -28,7 +56,7 @@ def _record_from_document(path: Path) -> Record:
             "15% urban, 25% rural",
             "25% urban, 35% rural",
             "10% general; 5% special",
-            text[:1000],
+            _eligibility_from_text(text, source),
         )
     if source == "pmegp":
         return Record(
@@ -37,7 +65,7 @@ def _record_from_document(path: Path) -> Record:
             "15% urban, 25% rural",
             "25% urban, 35% rural",
             "10% general; 5% special",
-            text[:1000],
+            _eligibility_from_text(text, source),
         )
     return Record(
         "Government Schemes for MSME",
@@ -45,7 +73,7 @@ def _record_from_document(path: Path) -> Record:
         "Varies by scheme",
         "Varies by scheme",
         "Varies by scheme",
-        text[:1000],
+        _eligibility_from_text(text, source),
     )
 
 
