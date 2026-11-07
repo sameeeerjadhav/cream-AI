@@ -51,7 +51,7 @@ python -m app.ingest
 Documents are saved under `data/raw/`. The ingest step skips malformed files,
 reports the error, and writes cleaned records to `data/records.json`.
 
-## Week 1 API and analysis
+## How to run
 
 Install the API and analysis dependencies, then start the FastAPI service:
 
