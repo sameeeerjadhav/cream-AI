@@ -50,3 +50,22 @@ python -m app.ingest
 
 Documents are saved under `data/raw/`. The ingest step skips malformed files,
 reports the error, and writes cleaned records to `data/records.json`.
+
+## Week 1 API and analysis
+
+Install the API and analysis dependencies, then start the FastAPI service:
+
+```powershell
+python -m pip install -r requirements.txt
+python -m uvicorn app.main:app --reload
+```
+
+The service provides `GET /health`, `GET /records?limit=`, `GET
+/records/{id}`, `GET /search?q=`, and `POST /questions`. Interactive API
+documentation is available at `http://127.0.0.1:8000/docs`.
+
+Run the pandas exploration script separately:
+
+```powershell
+python -m analysis.explore
+```
