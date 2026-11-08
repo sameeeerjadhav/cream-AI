@@ -40,7 +40,7 @@ The environment is intentionally ignored by Git.
 
 ## Day 3 data pipeline
 
-Install the downloader dependency and fetch the three official documents:
+Install the downloader dependency and fetch the official scheme documents:
 
 ```powershell
 python -m pip install -r requirements.txt

@@ -8,6 +8,9 @@ DOCUMENTS = {
     "cmegp.html": "https://bankofmaharashtra.bank.in/cmegp",
     "pmegp.html": "https://bankofmaharashtra.bank.in/pmegp",
     "msme-schemes.html": "https://bankofmaharashtra.bank.in/government-schemes-for-msme",
+    "mudra.html": "https://bankofmaharashtra.bank.in/pradhan-mantri-mudra-yojana",
+    "stand-up-india.html": "https://bankofmaharashtra.bank.in/stand-up-india",
+    "vishwakarma.html": "https://bankofmaharashtra.bank.in/pm-vishwakarma",
 }
 
 

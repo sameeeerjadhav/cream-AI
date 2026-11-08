@@ -26,6 +26,8 @@ def _eligibility_from_text(text: str, source: str) -> str:
             r"7\)\s*Other Eligibility Conditions under CMEGP:",
         ),
         "pmegp": (r"Eligible Borrowers", r"Repayment Tenor"),
+        "mudra": (r"Eligibility Borrowers", r"5\s*Quantum of Finance"),
+        "stand-up-india": (r"Eligibility", r"Nature of Loan"),
     }
     boundaries = sections.get(source)
     if boundaries is None:
@@ -66,6 +68,33 @@ def _record_from_document(path: Path) -> Record:
             "25% urban, 35% rural",
             "10% general; 5% special",
             _eligibility_from_text(text, source),
+        )
+    if source == "mudra":
+        return Record(
+            "Pradhan Mantri MUDRA Yojana (PMMY)",
+            "Loan up to Rs 20 lakh",
+            "Not applicable",
+            "Not applicable",
+            "As decided by the lender",
+            _eligibility_from_text(text, source),
+        )
+    if source == "stand-up-india":
+        return Record(
+            "Stand-Up India",
+            "Composite loan from Rs 10 lakh to Rs 1 crore",
+            "Not applicable",
+            "Not applicable",
+            "At least 10% of project cost",
+            _eligibility_from_text(text, source),
+        )
+    if source == "vishwakarma":
+        return Record(
+            "PM Vishwakarma",
+            "Loan up to Rs 3 lakh in two tranches",
+            "Interest subvention to 5% beneficiary rate",
+            "Interest subvention to 5% beneficiary rate",
+            "As specified under the scheme",
+            "Artisans and craftspeople (Vishwakarma) for their respective trades.",
         )
     return Record(
         "Government Schemes for MSME",

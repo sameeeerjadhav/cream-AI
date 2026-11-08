@@ -16,11 +16,35 @@
     "eligibility": "Eligibility details are not listed on the source page."
   },
   {
+    "scheme_name": "Pradhan Mantri MUDRA Yojana (PMMY)",
+    "max_project_cost": "Loan up to Rs 20 lakh",
+    "subsidy_general": "Not applicable",
+    "subsidy_special": "Not applicable",
+    "own_contribution": "As decided by the lender",
+    "eligibility": "New or existing micro unit / enterprise, including micro unit/enterprise set up under Joint Liability Group (JLG) framework, individually or jointly (irrespective of the availability of guarantee under JLG), falling under any sector covered under PMMY or as defined in the MSMED Act, 2006 (as amended from time to time), who meets eligibility criteria prescribed by CGFMU and whose credit requirement does not exceed the specified limit under PMMY. Specified maximum limit of the loan shall be Rs.20 lakh or such other amount as may be decided by the CGFMU from time to time. Overdraft loan amount of Rs.10,000/- sanctioned under PMJDY accounts shall also be eligible to be covered under Credit guarantee Fund. Self Help Groups who meet eligibility criteria. Individuals, Proprietary concern, Partnership Firm, Private Ltd. Company, Public Company, and any other legal entity. The applicant should not be defaulter to any bank or financial institution and should have a satisfactory credit track record. The individual borrowers may be required to possess the necessary skills/experience/ knowledge to undertake the proposed activity. The need for educational qualification, if any, need to be assessed based on the nature of the proposed activity, and its requirement"
+  },
+  {
     "scheme_name": "Prime Minister's Employment Generation Programme (PMEGP)",
     "max_project_cost": "Rs 50 lakh manufacturing; Rs 20 lakh service",
     "subsidy_general": "15% urban, 25% rural",
     "subsidy_special": "25% urban, 35% rural",
     "own_contribution": "10% general; 5% special",
     "eligibility": "Any individual, above 18 years of age. No income ceiling for assistance for setting up of projects under PMEGP. Should possess at least VIII standard pass educational qualification for setting up of project costing above Rs.10 lakh in Manufacturing sector and above Rs.5 lakh in Business / Service Sector. Only new projects. Existing units (PMRY, REGP or any other scheme of Govt. of India or State Govt.) and the units that have already availed Govt. Subsidy under any other scheme of Govt. of India or State Govt. are not eligible. Projects without capital expenditure are not eligible. Cost of land is not included in Project Cost. Only one person from one family (self and spouse) is eligible under this scheme"
+  },
+  {
+    "scheme_name": "Stand-Up India",
+    "max_project_cost": "Composite loan from Rs 10 lakh to Rs 1 crore",
+    "subsidy_general": "Not applicable",
+    "subsidy_special": "Not applicable",
+    "own_contribution": "At least 10% of project cost",
+    "eligibility": "SC/ST and/or woman entrepreneurs, above 18 years of age. Loans under the scheme is available for only green field project. Green field signifies, in this context, the first time venture of the beneficiary in the manufacturing or services or trading sector. In case of non-individual enterprises, 51% of the shareholding and controlling stake should be held by either SC/ST and/or Women Entrepreneur. Borrower should not be in default to any bank/financial institution"
+  },
+  {
+    "scheme_name": "PM Vishwakarma",
+    "max_project_cost": "Loan up to Rs 3 lakh in two tranches",
+    "subsidy_general": "Interest subvention to 5% beneficiary rate",
+    "subsidy_special": "Interest subvention to 5% beneficiary rate",
+    "own_contribution": "As specified under the scheme",
+    "eligibility": "Artisans and craftspeople (Vishwakarma) for their respective trades."
   }
 ]
