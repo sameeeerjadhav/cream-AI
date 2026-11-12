@@ -1,0 +1,10 @@
+Answer this user question using the retrieved UdyamSathi records.
+
+User question:
+{question}
+
+Retrieved records:
+{context}
+
+Return JSON only:
+{{"answer":"...", "confidence":"low|medium|high", "follow_up":"..."}}

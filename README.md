@@ -74,3 +74,9 @@ Checkpoint materials:
 
 - [How LLMs work](docs/how_llms_work.md)
 - [UdyamSathi user questions](docs/user_questions.md)
+
+## LLM chat
+
+Copy `.env.example` to `.env`, set `LLM_PROVIDER` and the matching provider
+API key, then start the service. The `POST /chat` endpoint returns `answer`,
+`confidence`, and `follow_up`. Never commit `.env` or an API key.

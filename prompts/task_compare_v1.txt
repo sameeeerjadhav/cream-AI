@@ -1,0 +1,2 @@
+Answer the user's question directly from the supplied records. Keep the answer
+short and mention when the records do not contain enough information.
