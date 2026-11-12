@@ -69,3 +69,8 @@ Run the pandas exploration script separately:
 ```powershell
 python -m analysis.explore
 ```
+
+Checkpoint materials:
+
+- [How LLMs work](docs/how_llms_work.md)
+- [UdyamSathi user questions](docs/user_questions.md)
