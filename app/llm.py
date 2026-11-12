@@ -22,6 +22,10 @@ class LLMResponseError(RuntimeError):
     """Raised when a provider response cannot be interpreted."""
 
 
+class LLMProviderError(RuntimeError):
+    """Raised when a provider request fails."""
+
+
 @dataclass(frozen=True)
 class ChatResult:
     answer: str
@@ -54,36 +58,56 @@ def _request_provider(
     provider: str, key: str, model: str, system_prompt: str, user_prompt: str
 ) -> str:
     if provider == "groq":
+        try:
+            response = requests.post(
+                "https://api.groq.com/openai/v1/chat/completions",
+                headers={"Authorization": f"Bearer {key}"},
+                json={
+                    "model": model,
+                    "temperature": 0.2,
+                    "messages": [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt},
+                    ],
+                },
+                timeout=30,
+            )
+            response.raise_for_status()
+            payload = response.json()
+            return payload["choices"][0]["message"]["content"]
+        except (
+            requests.RequestException,
+            TimeoutError,
+            ValueError,
+            KeyError,
+            IndexError,
+            TypeError,
+        ) as error:
+            raise LLMProviderError("Groq request failed") from error
+
+    try:
         response = requests.post(
-            "https://api.groq.com/openai/v1/chat/completions",
-            headers={"Authorization": f"Bearer {key}"},
+            f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
+            params={"key": key},
             json={
-                "model": model,
-                "temperature": 0.2,
-                "messages": [
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_prompt},
-                ],
+                "systemInstruction": {"parts": [{"text": system_prompt}]},
+                "contents": [{"role": "user", "parts": [{"text": user_prompt}]}],
+                "generationConfig": {"temperature": 0.2},
             },
             timeout=30,
         )
         response.raise_for_status()
         payload = response.json()
-        return payload["choices"][0]["message"]["content"]
-
-    response = requests.post(
-        f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
-        params={"key": key},
-        json={
-            "systemInstruction": {"parts": [{"text": system_prompt}]},
-            "contents": [{"role": "user", "parts": [{"text": user_prompt}]}],
-            "generationConfig": {"temperature": 0.2},
-        },
-        timeout=30,
-    )
-    response.raise_for_status()
-    payload = response.json()
-    return payload["candidates"][0]["content"]["parts"][0]["text"]
+        return payload["candidates"][0]["content"]["parts"][0]["text"]
+    except (
+        requests.RequestException,
+        TimeoutError,
+        ValueError,
+        KeyError,
+        IndexError,
+        TypeError,
+    ) as error:
+        raise LLMProviderError("Gemini request failed") from error
 
 
 def _parse_result(raw: str) -> ChatResult:
@@ -99,7 +123,9 @@ def _parse_result(raw: str) -> ChatResult:
         )
     except (ValueError, KeyError, TypeError) as error:
         raise LLMResponseError("Provider returned invalid chat JSON") from error
-    if not all((result.answer, result.confidence, result.follow_up)):
+    if result.confidence not in {"low", "medium", "high"}:
+        raise LLMResponseError("Provider returned invalid confidence")
+    if not all((result.answer, result.follow_up)):
         raise LLMResponseError("Provider returned incomplete chat JSON")
     return result
 

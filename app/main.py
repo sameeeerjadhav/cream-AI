@@ -5,7 +5,12 @@ from typing import Any
 from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel, Field
 
-from app.llm import LLMConfigurationError, LLMResponseError, chat
+from app.llm import (
+    LLMConfigurationError,
+    LLMProviderError,
+    LLMResponseError,
+    chat,
+)
 from app.smart_search import load_records, search_records
 
 app = FastAPI(title="UdyamSathi API")
@@ -59,7 +64,7 @@ def chat_endpoint(request: ChatRequest) -> dict[str, str]:
     context = search_records(records, request.question, limit=3)
     try:
         result = chat(request.question, context)
-    except (LLMConfigurationError, LLMResponseError) as error:
+    except (LLMConfigurationError, LLMProviderError, LLMResponseError) as error:
         raise HTTPException(status_code=503, detail=str(error)) from error
     return {
         "answer": result.answer,
