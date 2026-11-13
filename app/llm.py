@@ -75,6 +75,9 @@ def _request_provider(
             response.raise_for_status()
             payload = response.json()
             return payload["choices"][0]["message"]["content"]
+        except requests.HTTPError as error:
+            status = error.response.status_code if error.response is not None else "unknown"
+            raise LLMProviderError(f"Groq request failed (HTTP {status})") from error
         except (
             requests.RequestException,
             TimeoutError,
@@ -99,6 +102,9 @@ def _request_provider(
         response.raise_for_status()
         payload = response.json()
         return payload["candidates"][0]["content"]["parts"][0]["text"]
+    except requests.HTTPError as error:
+        status = error.response.status_code if error.response is not None else "unknown"
+        raise LLMProviderError(f"Gemini request failed (HTTP {status})") from error
     except (
         requests.RequestException,
         TimeoutError,
