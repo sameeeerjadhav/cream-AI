@@ -70,6 +70,15 @@ Run the pandas exploration script separately:
 python -m analysis.explore
 ```
 
+Build the persistent semantic index and query it:
+
+```powershell
+python -c "from app.vectorstore import index_documents; print(index_documents())"
+```
+
+Use `GET /search/semantic?q=...` for embedding-based search. Chroma data is
+stored locally under `data/chroma/` and is intentionally ignored by Git.
+
 Checkpoint materials:
 
 - [How LLMs work](docs/how_llms_work.md)

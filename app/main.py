@@ -12,6 +12,7 @@ from app.llm import (
     chat,
 )
 from app.smart_search import load_records, search_records
+from app.vectorstore import semantic_search
 
 app = FastAPI(title="UdyamSathi API")
 records = load_records()
@@ -51,6 +52,14 @@ def search(
     limit: int = Query(default=10, ge=1, le=100),
 ) -> list[dict[str, Any]]:
     return search_records(records, q, limit)
+
+
+@app.get("/search/semantic")
+def semantic_search_endpoint(
+    q: str = Query(min_length=1),
+    limit: int = Query(default=5, ge=1, le=20),
+) -> list[dict[str, Any]]:
+    return semantic_search(q, limit)
 
 
 @app.post("/questions")
