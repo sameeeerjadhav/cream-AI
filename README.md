@@ -61,7 +61,9 @@ python -m uvicorn app.main:app --reload
 ```
 
 The service provides `GET /health`, `GET /records?limit=`, `GET
-/records/{id}`, `GET /search?q=`, and `POST /questions`. Interactive API
+/records/{id}`, `GET /search?q=`, `POST /questions`, `POST /chat`, and
+`POST /ask`. `/ask` retrieves source chunks, answers with citations, and
+returns "I don't know" when the sources cannot answer the question. Interactive API
 documentation is available at `http://127.0.0.1:8000/docs`.
 
 Run the pandas exploration script separately:
@@ -89,3 +91,21 @@ Checkpoint materials:
 Copy `.env.example` to `.env`, set `LLM_PROVIDER` and the matching provider
 API key, then start the service. The `POST /chat` endpoint returns `answer`,
 `confidence`, and `follow_up`. Never commit `.env` or an API key.
+
+## RAG evaluation
+
+Run the two retrieval configurations against the 15-question evaluation set:
+
+```powershell
+python -m eval.run_eval
+```
+
+The current comparison is:
+
+| Config | Chunk size | Top-k | Answerable hits | Hit rate | Q6 unknown |
+|---|---:|---:|---:|---:|---|
+| A | 180 | 3 | 8/14 | 0.571 | 1/1 |
+| B | 120 | 5 | 10/14 | 0.714 | 1/1 |
+
+Config B is the winner because it retrieves the most expected evidence while
+preserving the required unknown response for Q6.

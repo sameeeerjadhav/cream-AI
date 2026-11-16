@@ -76,8 +76,10 @@ def chunk_document(path: Path, size: int = 180, overlap: int = 30) -> list[Docum
     ]
 
 
-def chunk_documents(raw_dir: Path = Path("data/raw")) -> list[DocumentChunk]:
+def chunk_documents(
+    raw_dir: Path = Path("data/raw"), size: int = 180, overlap: int = 30
+) -> list[DocumentChunk]:
     chunks: list[DocumentChunk] = []
     for path in sorted(raw_dir.glob("*.html")):
-        chunks.extend(chunk_document(path))
+        chunks.extend(chunk_document(path, size=size, overlap=overlap))
     return chunks

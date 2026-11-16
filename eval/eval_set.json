@@ -1,0 +1,92 @@
+[
+  {
+    "id": "q01",
+    "question": "Am I eligible for PMEGP if I am starting a new manufacturing business?",
+    "keywords": ["PMEGP", "new projects"],
+    "must_say_unknown": false
+  },
+  {
+    "id": "q02",
+    "question": "What is the maximum project cost for a PMEGP service business?",
+    "keywords": ["Rs.25 lakh", "Business / Service Sector"],
+    "must_say_unknown": false
+  },
+  {
+    "id": "q03",
+    "question": "What subsidy is available under CMEGP for a rural applicant?",
+    "keywords": ["subsidy", "rural"],
+    "must_say_unknown": false
+  },
+  {
+    "id": "q04",
+    "question": "How much own contribution is needed for a general-category applicant?",
+    "keywords": ["General Category", "10%"],
+    "must_say_unknown": false
+  },
+  {
+    "id": "q05",
+    "question": "Which scheme is suitable for a woman starting a greenfield enterprise?",
+    "keywords": ["Stand-Up India", "green field"],
+    "must_say_unknown": false
+  },
+  {
+    "id": "q06",
+    "question": "Has my PMEGP loan application been approved, and when will the money arrive?",
+    "keywords": [],
+    "must_say_unknown": true
+  },
+  {
+    "id": "q07",
+    "question": "Can a family use PMEGP assistance for two different businesses?",
+    "keywords": ["one person from one family"],
+    "must_say_unknown": false
+  },
+  {
+    "id": "q08",
+    "question": "Do I need an eighth-standard qualification for a larger PMEGP project?",
+    "keywords": ["VIII standard", "Rs.10 lakh"],
+    "must_say_unknown": false
+  },
+  {
+    "id": "q09",
+    "question": "What are the 2025 investment and turnover limits for a micro enterprise?",
+    "keywords": ["micro", "investment"],
+    "must_say_unknown": false
+  },
+  {
+    "id": "q10",
+    "question": "Is MUDRA available for a small food-processing or service business?",
+    "keywords": ["micro unit", "PMMY"],
+    "must_say_unknown": false
+  },
+  {
+    "id": "q11",
+    "question": "What is the maximum CMEGP project cost for manufacturing?",
+    "keywords": ["Rs.50 lakh", "manufacturing"],
+    "must_say_unknown": false
+  },
+  {
+    "id": "q12",
+    "question": "Who can apply for PM Vishwakarma?",
+    "keywords": ["Artisans", "craftspeople"],
+    "must_say_unknown": false
+  },
+  {
+    "id": "q13",
+    "question": "What is the maximum loan under PMMY?",
+    "keywords": ["Rs.20 lakh", "PMMY"],
+    "must_say_unknown": false
+  },
+  {
+    "id": "q14",
+    "question": "What does greenfield mean under Stand-Up India?",
+    "keywords": ["first time venture", "manufacturing"],
+    "must_say_unknown": false
+  },
+  {
+    "id": "q15",
+    "question": "Does CMEGP have an income ceiling?",
+    "keywords": ["no income ceiling"],
+    "must_say_unknown": false
+  }
+]

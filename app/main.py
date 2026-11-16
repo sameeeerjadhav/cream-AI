@@ -11,6 +11,7 @@ from app.llm import (
     LLMResponseError,
     chat,
 )
+from app.rag import answer_question
 from app.smart_search import load_records, search_records
 from app.vectorstore import semantic_search
 
@@ -24,6 +25,11 @@ class QuestionRequest(BaseModel):
 
 class ChatRequest(BaseModel):
     question: str = Field(min_length=1)
+
+
+class AskRequest(BaseModel):
+    question: str = Field(min_length=1)
+    top_k: int = Field(default=5, ge=1, le=10)
 
 
 @app.get("/health")
@@ -79,4 +85,19 @@ def chat_endpoint(request: ChatRequest) -> dict[str, str]:
         "answer": result.answer,
         "confidence": result.confidence,
         "follow_up": result.follow_up,
+    }
+
+
+@app.post("/ask")
+def ask_endpoint(request: AskRequest) -> dict[str, Any]:
+    try:
+        result = answer_question(request.question, top_k=request.top_k)
+    except (LLMConfigurationError, LLMProviderError, LLMResponseError) as error:
+        raise HTTPException(status_code=503, detail=str(error)) from error
+    return {
+        "question": request.question,
+        "answer": result.answer,
+        "confidence": result.confidence,
+        "follow_up": result.follow_up,
+        "citations": result.citations,
     }
