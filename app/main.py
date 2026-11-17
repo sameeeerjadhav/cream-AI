@@ -12,6 +12,7 @@ from app.llm import (
     chat,
 )
 from app.rag import answer_question
+from app.graph import run_graph
 from app.smart_search import load_records, search_records
 from app.vectorstore import semantic_search
 
@@ -30,6 +31,21 @@ class ChatRequest(BaseModel):
 class AskRequest(BaseModel):
     question: str = Field(min_length=1)
     top_k: int = Field(default=5, ge=1, le=10)
+
+
+class CalculatorRequest(BaseModel):
+    project_cost: float = Field(gt=0)
+    activity_type: str
+    category: str
+    rural_urban: str
+    scheme: str
+
+
+class AgentRequest(BaseModel):
+    question: str = Field(min_length=1)
+    calculator: CalculatorRequest | None = None
+    approved: bool = False
+    thread_id: str = Field(default="default", min_length=1, max_length=100)
 
 
 @app.get("/health")
@@ -101,3 +117,19 @@ def ask_endpoint(request: AskRequest) -> dict[str, Any]:
         "follow_up": result.follow_up,
         "citations": result.citations,
     }
+
+
+@app.post("/agent")
+def agent_endpoint(request: AgentRequest) -> dict[str, Any]:
+    calculator_args = (
+        request.calculator.model_dump() if request.calculator is not None else None
+    )
+    try:
+        return run_graph(
+            request.question,
+            calculator_args,
+            request.approved,
+            request.thread_id,
+        )
+    except ValueError as error:
+        raise HTTPException(status_code=400, detail=str(error)) from error

@@ -109,3 +109,42 @@ The current comparison is:
 
 Config B is the winner because it retrieves the most expected evidence while
 preserving the required unknown response for Q6.
+
+## Agent and subsidy calculator
+
+The hand-written agent in `app/agent_loop.py` routes normal questions through
+RAG and explicit calculation requests through
+`margin_money_subsidy_calculator` in `app/tools.py`. The calculator supports
+PMEGP and CMEGP, validates manufacturing/service caps, and returns the
+estimated margin-money subsidy, own contribution, and bank finance. Its rates
+and caps are parsed from the PMEGP/CMEGP records in
+`data/sample_records.py`, and each result includes its source record ID.
+
+`app/graph.py` provides the LangGraph version with thread-scoped memory and a
+required approval step before the calculator runs. Start the API and call
+`POST /agent` with a calculator request:
+
+```json
+{
+  "question": "Calculate PMEGP support",
+  "calculator": {
+    "project_cost": 1000000,
+    "activity_type": "manufacturing",
+    "category": "general",
+    "rural_urban": "rural",
+    "scheme": "PMEGP"
+  },
+  "approved": true,
+  "thread_id": "demo-1"
+}
+```
+
+Send the same `thread_id` with `approved: false` first to review the request;
+the graph returns `approval_required` and does not calculate until approval is
+provided. These are estimates only, not a subsidy or loan sanction.
+
+Run the Day 8 regression tests:
+
+```powershell
+python -m unittest discover -s tests -p "test_*.py" -v
+```
