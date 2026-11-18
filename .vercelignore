@@ -1,0 +1,12 @@
+.git
+.github
+.venv
+.env
+__pycache__
+.pytest_cache
+.ruff_cache
+data/chroma
+data/ui_feedback.jsonl
+eval
+tests
+docs

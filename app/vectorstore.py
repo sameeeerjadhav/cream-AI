@@ -1,5 +1,6 @@
 """Persistent Chroma vector store for UdyamSathi document chunks."""
 
+import os
 from pathlib import Path
 from typing import Any
 
@@ -8,7 +9,11 @@ import chromadb
 from app.chunking import chunk_documents
 from app.embed import embed_texts
 
-CHROMA_PATH = Path("data/chroma")
+CHROMA_PATH = (
+    Path("/tmp/udyamsaathi-chroma")
+    if os.getenv("VERCEL") == "1"
+    else Path("data/chroma")
+)
 COLLECTION_NAME = "udyamsaathi_documents"
 
 
