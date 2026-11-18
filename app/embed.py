@@ -1,7 +1,7 @@
 """Sentence-transformer embeddings for UdyamSathi document chunks."""
 
 import os
-from typing import Sequence
+from collections.abc import Sequence
 
 from sentence_transformers import SentenceTransformer
 

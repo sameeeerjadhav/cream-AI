@@ -12,11 +12,15 @@ OUTPUT_PATH = Path("data/records.json")
 
 
 def _text_from_html(raw_html: str) -> str:
-    text = re.sub(r"<script\b[^>]*>.*?</script>", " ", raw_html, flags=re.I | re.S)
-    text = re.sub(r"<style\b[^>]*>.*?</style>", " ", text, flags=re.I | re.S)
+    text = re.sub(
+        r"<script\b[^>]*>.*?</script>", " ", raw_html, flags=re.IGNORECASE | re.DOTALL
+    )
+    text = re.sub(
+        r"<style\b[^>]*>.*?</style>", " ", text, flags=re.IGNORECASE | re.DOTALL
+    )
     text = re.sub(r"<[^>]+>", " ", text)
     text = re.sub(r"\s+", " ", unescape(text)).strip()
-    return re.sub(r"(\d)\s+(st|nd|rd|th)\b", r"\1\2", text, flags=re.I)
+    return re.sub(r"(\d)\s+(st|nd|rd|th)\b", r"\1\2", text, flags=re.IGNORECASE)
 
 
 def _eligibility_from_text(text: str, source: str) -> str:
@@ -37,7 +41,7 @@ def _eligibility_from_text(text: str, source: str) -> str:
     match = re.search(
         rf"{start}\s*(.*?)(?={end})",
         text,
-        flags=re.I | re.S,
+        flags=re.IGNORECASE | re.DOTALL,
     )
     if match is None:
         raise ValueError(f"eligibility section not found for {source}")

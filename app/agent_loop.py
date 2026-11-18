@@ -33,6 +33,8 @@ def run_agent(
         "confidence": "high",
         "follow_up": "Confirm final eligibility and sanction terms with the lender.",
         "calculation": calculation,
-        "citations": [{"source": "scheme records", "page": 1, "title": calculation["scheme"]}],
+        "citations": [
+            {"source": "scheme records", "page": 1, "title": calculation["scheme"]}
+        ],
         "steps": ["validated_project_cost", "calculated_margin_money_subsidy"],
     }

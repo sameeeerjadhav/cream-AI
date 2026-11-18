@@ -20,7 +20,7 @@ def record_id(record: dict[str, Any]) -> str:
 def load_records(path: Path = RECORDS_PATH) -> list[dict[str, Any]]:
     records = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(records, list):
-        raise ValueError(f"{path} must contain a JSON list")
+        raise TypeError(f"{path} must contain a JSON list")
     return [{**record, "id": record_id(record)} for record in records]
 
 

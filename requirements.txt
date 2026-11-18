@@ -9,3 +9,5 @@ sentence-transformers>=3.0,<6
 langgraph>=0.2,<1
 streamlit>=1.40,<2
 requests>=2.31,<3
+pytest>=8,<9
+ruff>=0.9,<1

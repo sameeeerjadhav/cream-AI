@@ -1,5 +1,7 @@
 # UdyamSathi
 
+[![CI](https://github.com/sameeeerjadhav/cream-AI/actions/workflows/ci.yml/badge.svg)](https://github.com/sameeeerjadhav/cream-AI/actions/workflows/ci.yml)
+
 ## Project Card
 
 | Area | Details |

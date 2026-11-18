@@ -5,6 +5,7 @@ from typing import Any
 from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel, Field
 
+from app.graph import run_graph
 from app.llm import (
     LLMConfigurationError,
     LLMProviderError,
@@ -12,7 +13,6 @@ from app.llm import (
     chat,
 )
 from app.rag import answer_question
-from app.graph import run_graph
 from app.smart_search import load_records, search_records
 from app.vectorstore import semantic_search
 

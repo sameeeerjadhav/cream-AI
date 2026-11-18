@@ -8,29 +8,33 @@ from data.sample_records import RECORDS
 
 def _scheme_rules(scheme_key: str) -> dict[str, Any]:
     record = next(
-        (
-            item
-            for item in RECORDS
-            if item.get("id") == f"scheme-{scheme_key}"
-        ),
+        (item for item in RECORDS if item.get("id") == f"scheme-{scheme_key}"),
         None,
     )
     if record is None:
         raise ValueError(f"No stored record found for {scheme_key.upper()}")
 
-    max_cost = re.findall(r"Rs\s*(\d+)\s*lakh\s*(manufacturing|service)", record["max_project_cost"], re.I)
+    max_cost = re.findall(
+        r"Rs\s*(\d+)\s*lakh\s*(manufacturing|service)",
+        record["max_project_cost"],
+        re.IGNORECASE,
+    )
     if len(max_cost) != 2:
         raise ValueError(f"Invalid project-cost limits stored for {scheme_key.upper()}")
-    caps = {activity.casefold(): float(amount) * 100_000 for amount, activity in max_cost}
+    caps = {
+        activity.casefold(): float(amount) * 100_000 for amount, activity in max_cost
+    }
 
     general = re.search(
-        r"(\d+)%\s*urban,\s*(\d+)%\s*rural", record["subsidy_general"], re.I
+        r"(\d+)%\s*urban,\s*(\d+)%\s*rural", record["subsidy_general"], re.IGNORECASE
     )
     special = re.search(
-        r"(\d+)%\s*urban,\s*(\d+)%\s*rural", record["subsidy_special"], re.I
+        r"(\d+)%\s*urban,\s*(\d+)%\s*rural", record["subsidy_special"], re.IGNORECASE
     )
     own = re.search(
-        r"(\d+)%\s*general;\s*(\d+)%\s*special", record["own_contribution"], re.I
+        r"(\d+)%\s*general;\s*(\d+)%\s*special",
+        record["own_contribution"],
+        re.IGNORECASE,
     )
     if not general or not special or not own:
         raise ValueError(f"Invalid subsidy rates stored for {scheme_key.upper()}")
@@ -39,10 +43,19 @@ def _scheme_rules(scheme_key: str) -> dict[str, Any]:
         "record_id": record["id"],
         "caps": caps,
         "subsidy_rates": {
-            "general": {"urban": int(general.group(1)) / 100, "rural": int(general.group(2)) / 100},
-            "special": {"urban": int(special.group(1)) / 100, "rural": int(special.group(2)) / 100},
+            "general": {
+                "urban": int(general.group(1)) / 100,
+                "rural": int(general.group(2)) / 100,
+            },
+            "special": {
+                "urban": int(special.group(1)) / 100,
+                "rural": int(special.group(2)) / 100,
+            },
         },
-        "own_rates": {"general": int(own.group(1)) / 100, "special": int(own.group(2)) / 100},
+        "own_rates": {
+            "general": int(own.group(1)) / 100,
+            "special": int(own.group(2)) / 100,
+        },
     }
 
 
@@ -104,8 +117,7 @@ def margin_money_subsidy_calculator(
     cap = rules["caps"][activity]
     if project_cost > cap:
         raise ValueError(
-            f"{rules['name']} {activity} project cost "
-            f"cannot exceed Rs {cap:,.0f}"
+            f"{rules['name']} {activity} project cost cannot exceed Rs {cap:,.0f}"
         )
 
     subsidy_rate = rules["subsidy_rates"][applicant_category][location]
