@@ -10,8 +10,8 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends curl \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
-RUN python -m pip install --no-cache-dir -r requirements.txt
+COPY requirements-full.txt .
+RUN python -m pip install --no-cache-dir -r requirements-full.txt
 
 COPY app ./app
 COPY data ./data
