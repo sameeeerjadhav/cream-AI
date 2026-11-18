@@ -148,3 +148,23 @@ Run the Day 8 regression tests:
 ```powershell
 python -m unittest discover -s tests -p "test_*.py" -v
 ```
+
+## Streamlit live demo — Checkpoint 2
+
+Run the API and the Streamlit interface in separate terminals:
+
+```powershell
+python -m uvicorn app.main:app --reload
+python -m streamlit run ui/app.py --server.address 127.0.0.1 --server.port 8501
+```
+
+Open `http://127.0.0.1:8501/`. The interface provides:
+
+- a chat panel that calls `POST /ask` or `POST /agent`;
+- expandable source citations for chat answers;
+- thumbs-up/thumbs-down feedback saved locally to `data/ui_feedback.jsonl`;
+- the PMEGP vs CMEGP scheme-fit table with qualification status and estimated finance.
+
+Screenshot:
+
+![UdyamSathi Checkpoint 2 UI](docs/checkpoint-2-ui.png)

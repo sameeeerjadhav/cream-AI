@@ -3,7 +3,12 @@
 from dataclasses import dataclass
 from typing import Any
 
-from app.llm import chat
+from app.llm import (
+    LLMConfigurationError,
+    LLMProviderError,
+    LLMResponseError,
+    chat,
+)
 from app.vectorstore import semantic_search
 
 
@@ -70,7 +75,28 @@ def answer_question(question: str, top_k: int = 5) -> RagResult:
             citations=[],
         )
 
-    result = chat(question, hits)
+    try:
+        result = chat(question, hits)
+    except (LLMConfigurationError, LLMProviderError, LLMResponseError):
+        excerpts = [
+            str(hit.get("text", "")).strip()
+            for hit in hits[:2]
+            if str(hit.get("text", "")).strip()
+        ]
+        evidence = " ".join(excerpts)
+        if evidence:
+            answer = (
+                "The retrieved UdyamSathi sources contain relevant information, "
+                f"but the answer-generation provider is unavailable. Evidence: {evidence[:900]}"
+            )
+        else:
+            answer = "I don't know. No usable source evidence was retrieved."
+        return RagResult(
+            answer=answer,
+            confidence="low",
+            follow_up="Review the cited official source or try again when the provider is configured.",
+            citations=citations,
+        )
 
     source_labels = ", ".join(
         f"[{index}] {citation['source']} p.{citation['page']}"
