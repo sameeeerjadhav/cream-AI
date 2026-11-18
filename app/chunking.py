@@ -1,9 +1,9 @@
 """Chunk downloaded UdyamSathi HTML documents with source metadata."""
 
+import re
 from dataclasses import dataclass
 from html.parser import HTMLParser
 from pathlib import Path
-import re
 
 
 @dataclass(frozen=True)
@@ -57,7 +57,9 @@ def _chunks(words: list[str], size: int, overlap: int) -> list[list[str]]:
     return result
 
 
-def chunk_document(path: Path, size: int = 180, overlap: int = 30) -> list[DocumentChunk]:
+def chunk_document(
+    path: Path, size: int = 180, overlap: int = 30
+) -> list[DocumentChunk]:
     parser = _TextParser()
     parser.feed(path.read_text(encoding="utf-8"))
     title = " ".join(parser.title_parts).strip() or path.stem

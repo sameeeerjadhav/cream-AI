@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-import json
 import importlib.util
+import json
 import os
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -65,7 +65,7 @@ def save_feedback(question: str, answer: str, rating: str) -> None:
     FEEDBACK_PATH.parent.mkdir(parents=True, exist_ok=True)
     row = {
         "id": str(uuid.uuid4()),
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "question": question,
         "answer": answer,
         "rating": rating,
@@ -143,12 +143,14 @@ def scheme_fit(
     )
     results["PMEGP"] = {
         "qualifies": pmegp_qualifies,
-        "reasons": pmegp_reasons or ["Applicant age and project-cost cap are within the available rules."],
+        "reasons": pmegp_reasons
+        or ["Applicant age and project-cost cap are within the available rules."],
         "calculation": pmegp_calculation if pmegp_qualifies else None,
     }
     results["CMEGP"] = {
         "qualifies": cmegp_qualifies,
-        "reasons": cmegp_reasons or ["Applicant age and project-cost cap are within the available rules."],
+        "reasons": cmegp_reasons
+        or ["Applicant age and project-cost cap are within the available rules."],
         "calculation": cmegp_calculation if cmegp_qualifies else None,
     }
     return results
@@ -180,7 +182,9 @@ def render_status(name: str, fit: dict[str, Any]) -> None:
     if fit["qualifies"]:
         st.markdown('<div class="status-ok">You qualify</div>', unsafe_allow_html=True)
     else:
-        st.markdown('<div class="status-no">Not qualified</div>', unsafe_allow_html=True)
+        st.markdown(
+            '<div class="status-no">Not qualified</div>', unsafe_allow_html=True
+        )
     for reason in fit["reasons"]:
         st.markdown(f"- {reason}")
     calculation = fit["calculation"]
@@ -188,8 +192,12 @@ def render_status(name: str, fit: dict[str, Any]) -> None:
         st.markdown("#### Estimated finance")
         metric_columns = st.columns(3)
         metric_columns[0].metric("Subsidy", f"Rs {calculation['subsidy_amount']:,.0f}")
-        metric_columns[1].metric("Your contribution", f"Rs {calculation['own_contribution']:,.0f}")
-        metric_columns[2].metric("Bank loan", f"Rs {calculation['bank_loan_amount']:,.0f}")
+        metric_columns[1].metric(
+            "Your contribution", f"Rs {calculation['own_contribution']:,.0f}"
+        )
+        metric_columns[2].metric(
+            "Bank loan", f"Rs {calculation['bank_loan_amount']:,.0f}"
+        )
 
 
 st.markdown(
@@ -246,54 +254,62 @@ with tab_chat:
         st.session_state.messages.append({"role": "user", "content": question})
         with st.chat_message("user"):
             st.markdown(question)
-        with st.chat_message("assistant"):
-            with st.spinner("Searching UdyamSathi sources..."):
-                try:
-                    if api_mode == "RAG /ask":
-                        payload = post_json("/ask", {"question": question, "top_k": 5})
-                        answer = str(payload.get("answer", "I don't know"))
-                        citations = payload.get("citations", [])
-                    else:
-                        payload = post_json(
-                            "/agent",
-                            {
-                                "question": question,
-                                "approved": False,
-                                "thread_id": "streamlit-session",
-                            },
-                        )
-                        agent_answer = payload.get("answer", {})
-                        answer = str(agent_answer.get("answer", "I don't know"))
-                        citations = agent_answer.get("citations", [])
-                    st.markdown(answer)
-                    if citations:
-                        with st.expander("Sources"):
-                            for index, citation in enumerate(citations, start=1):
-                                st.markdown(
-                                    f"**[{index}] {citation.get('title', 'Source')}** — "
-                                    f"{citation.get('source', 'unknown')} p.{citation.get('page', 1)}"
-                                )
-                    st.session_state.messages.append(
+        with (
+            st.chat_message("assistant"),
+            st.spinner("Searching UdyamSathi sources..."),
+        ):
+            try:
+                if api_mode == "RAG /ask":
+                    payload = post_json("/ask", {"question": question, "top_k": 5})
+                    answer = str(payload.get("answer", "I don't know"))
+                    citations = payload.get("citations", [])
+                else:
+                    payload = post_json(
+                        "/agent",
                         {
-                            "role": "assistant",
-                            "content": answer,
-                            "citations": citations,
                             "question": question,
-                        }
+                            "approved": False,
+                            "thread_id": "streamlit-session",
+                        },
                     )
-                    feedback_left, feedback_right, _ = st.columns([1, 1, 8])
-                    if feedback_left.button("👍 Helpful", key=f"up-{len(st.session_state.messages)}"):
-                        save_feedback(question, answer, "thumbs_up")
-                        st.toast("Thank you for your feedback!")
-                    if feedback_right.button("👎 Not helpful", key=f"down-{len(st.session_state.messages)}"):
-                        save_feedback(question, answer, "thumbs_down")
-                        st.toast("Feedback saved.")
-                except requests.RequestException as error:
-                    st.error(f"UdyamSathi API request failed: {error}")
+                    agent_answer = payload.get("answer", {})
+                    answer = str(agent_answer.get("answer", "I don't know"))
+                    citations = agent_answer.get("citations", [])
+                st.markdown(answer)
+                if citations:
+                    with st.expander("Sources"):
+                        for index, citation in enumerate(citations, start=1):
+                            st.markdown(
+                                f"**[{index}] {citation.get('title', 'Source')}** — "
+                                f"{citation.get('source', 'unknown')} p.{citation.get('page', 1)}"
+                            )
+                st.session_state.messages.append(
+                    {
+                        "role": "assistant",
+                        "content": answer,
+                        "citations": citations,
+                        "question": question,
+                    }
+                )
+                feedback_left, feedback_right, _ = st.columns([1, 1, 8])
+                if feedback_left.button(
+                    "👍 Helpful", key=f"up-{len(st.session_state.messages)}"
+                ):
+                    save_feedback(question, answer, "thumbs_up")
+                    st.toast("Thank you for your feedback!")
+                if feedback_right.button(
+                    "👎 Not helpful", key=f"down-{len(st.session_state.messages)}"
+                ):
+                    save_feedback(question, answer, "thumbs_down")
+                    st.toast("Feedback saved.")
+            except requests.RequestException as error:
+                st.error(f"UdyamSathi API request failed: {error}")
 
 with tab_fit:
     st.subheader("Compare PMEGP and CMEGP")
-    st.caption("A pre-screening estimate based on the stored scheme rules. Final eligibility depends on the lender.")
+    st.caption(
+        "A pre-screening estimate based on the stored scheme rules. Final eligibility depends on the lender."
+    )
     col1, col2, col3 = st.columns(3)
     with col1:
         age = st.number_input("Age", min_value=15, max_value=100, value=30)
@@ -322,7 +338,9 @@ with tab_fit:
             value=10.0,
             step=0.5,
         )
-        calculate = st.button("Compare schemes", type="primary", use_container_width=True)
+        calculate = st.button(
+            "Compare schemes", type="primary", use_container_width=True
+        )
 
     if calculate:
         fit = scheme_fit(

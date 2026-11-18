@@ -46,9 +46,7 @@ def _provider_config() -> tuple[str, str, str]:
         key = os.getenv("GEMINI_API_KEY", "")
         model = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
     else:
-        raise LLMConfigurationError(
-            "LLM_PROVIDER must be either 'groq' or 'gemini'"
-        )
+        raise LLMConfigurationError("LLM_PROVIDER must be either 'groq' or 'gemini'")
     if not key:
         raise LLMConfigurationError(f"Missing API key for provider '{provider}'")
     return provider, key, model
@@ -76,7 +74,9 @@ def _request_provider(
             payload = response.json()
             return payload["choices"][0]["message"]["content"]
         except requests.HTTPError as error:
-            status = error.response.status_code if error.response is not None else "unknown"
+            status = (
+                error.response.status_code if error.response is not None else "unknown"
+            )
             raise LLMProviderError(f"Groq request failed (HTTP {status})") from error
         except (
             requests.RequestException,
@@ -143,7 +143,5 @@ def chat(question: str, context: list[dict[str, Any]]) -> ChatResult:
         question=question,
         context=json.dumps(context, ensure_ascii=False, indent=2),
     )
-    raw = _request_provider(
-        provider, key, model, _prompt("system.txt"), user_prompt
-    )
+    raw = _request_provider(provider, key, model, _prompt("system.txt"), user_prompt)
     return _parse_result(raw)

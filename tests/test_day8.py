@@ -5,9 +5,9 @@ from unittest.mock import patch
 
 from app.agent_loop import run_agent
 from app.graph import run_graph
-from app.tools import margin_money_subsidy_calculator
-from app.rag import answer_question
 from app.llm import LLMProviderError
+from app.rag import answer_question
+from app.tools import margin_money_subsidy_calculator
 
 
 class CalculatorTests(unittest.TestCase):
