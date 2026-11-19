@@ -5,6 +5,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import os
+import time
 import uuid
 from datetime import UTC, datetime
 from pathlib import Path
@@ -23,38 +24,109 @@ TOOLS_MODULE = importlib.util.module_from_spec(TOOLS_SPEC)
 TOOLS_SPEC.loader.exec_module(TOOLS_MODULE)
 margin_money_subsidy_calculator = TOOLS_MODULE.margin_money_subsidy_calculator
 
-API_URL = os.getenv("UDYAMSAATHI_API_URL", "http://127.0.0.1:8000").rstrip("/")
 FEEDBACK_PATH = Path("data/ui_feedback.jsonl")
 
+DEFAULT_API_URL = os.getenv(
+    "UDYAMSAATHI_API_URL", "https://udyamsaathi-14cw.onrender.com"
+).rstrip("/")
+
 st.set_page_config(
-    page_title="UdyamSathi",
+    page_title="UdyamSathi — MSME Scheme Intelligence",
     page_icon="🌱",
     layout="wide",
+    initial_sidebar_state="expanded",
 )
 
 st.markdown(
     """
     <style>
-    [data-testid="stAppViewContainer"] { background: #f5f7fb; }
-    [data-testid="stHeader"] { background: rgba(0,0,0,0); }
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    
+    html, body, [class*="css"] {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    
+    [data-testid="stAppViewContainer"] {
+        background: #f8fafc;
+    }
+    
     .hero {
-        background: linear-gradient(135deg, #155eef 0%, #12b76a 100%);
-        color: white; border-radius: 18px; padding: 1.35rem 1.5rem;
+        background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #065f46 100%);
+        color: white;
+        border-radius: 20px;
+        padding: 2rem 2.25rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.15);
+    }
+    .hero h1 {
+        color: #ffffff !important;
+        margin: 0;
+        font-size: 2.25rem;
+        font-weight: 800;
+        letter-spacing: -0.025em;
+    }
+    .hero p {
+        color: #e2e8f0 !important;
+        margin: 0.5rem 0 0 0;
+        font-size: 1.05rem;
+        font-weight: 500;
+    }
+    
+    .card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+    
+    .status-ok {
+        background: #ecfdf5;
+        color: #065f46;
+        border: 1.5px solid #a7f3d0;
+        border-radius: 12px;
+        padding: 0.85rem;
+        text-align: center;
+        font-weight: 700;
+        font-size: 1.1rem;
         margin-bottom: 1rem;
     }
-    .hero h1 { color: white; margin: 0; font-size: 2rem; }
-    .hero p { color: #eef4ff; margin: 0.25rem 0 0 0; }
-    .status-ok {
-        background: #ecfdf3; color: #067647; border: 1px solid #abefc6;
-        border-radius: 10px; padding: 0.8rem; text-align: center;
-        font-weight: 700;
-    }
     .status-no {
-        background: #fff1f3; color: #b42318; border: 1px solid #fda29b;
-        border-radius: 10px; padding: 0.8rem; text-align: center;
+        background: #fff1f2;
+        color: #9f1239;
+        border: 1.5px solid #fecdd3;
+        border-radius: 12px;
+        padding: 0.85rem;
+        text-align: center;
         font-weight: 700;
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
     }
-    .caption-text { color: #475467; font-size: 0.9rem; }
+    
+    .metric-badge {
+        display: inline-block;
+        padding: 0.25rem 0.6rem;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    .badge-sub { background: #dcfce7; color: #166534; }
+    .badge-own { background: #e0e7ff; color: #3730a3; }
+    .badge-loan { background: #f1f5f9; color: #334155; }
+
+    .telemetry-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #f1f5f9;
+        color: #475467;
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 4px 10px;
+        border-radius: 9999px;
+        margin-top: 6px;
+    }
     </style>
     """,
     unsafe_allow_html=True,
@@ -74,10 +146,11 @@ def save_feedback(question: str, answer: str, rating: str) -> None:
         handle.write(json.dumps(row, ensure_ascii=False) + "\n")
 
 
-def post_json(path: str, payload: dict[str, Any]) -> dict[str, Any]:
-    response = requests.post(f"{API_URL}{path}", json=payload, timeout=60)
+def post_json(api_base: str, path: str, payload: dict[str, Any]) -> tuple[dict[str, Any], dict[str, str]]:
+    response = requests.post(f"{api_base}{path}", json=payload, timeout=60)
     response.raise_for_status()
-    return response.json()
+    headers = dict(response.headers)
+    return response.json(), headers
 
 
 def scheme_fit(
@@ -106,52 +179,49 @@ def scheme_fit(
     results: dict[str, dict[str, Any]] = {}
     pmegp_reasons: list[str] = []
     cmegp_reasons: list[str] = []
+
     if age < 18:
-        pmegp_reasons.append("Applicant must be at least 18 years old.")
-        cmegp_reasons.append("Applicant must be at least 18 years old.")
+        pmegp_reasons.append("Applicant must be at least 18 years of age.")
+        cmegp_reasons.append("Applicant must be at least 18 years of age.")
+
     if project_cost > caps[normalized_activity]:
-        pmegp_reasons.append(
-            f"Project cost exceeds the Rs {caps[normalized_activity]:,.0f} "
-            f"{normalized_activity} cap."
-        )
-        cmegp_reasons.append(
-            f"Project cost exceeds the Rs {caps[normalized_activity]:,.0f} "
-            f"{normalized_activity} cap."
-        )
+        cap_fmt = f"Rs {caps[normalized_activity]:,.0f}"
+        pmegp_reasons.append(f"Project cost exceeds the {cap_fmt} statutory cap for {normalized_activity}.")
+        cmegp_reasons.append(f"Project cost exceeds the {cap_fmt} statutory cap for {normalized_activity}.")
+
     cmegp_upper_age = 50 if is_special else 45
     if age > cmegp_upper_age:
         cmegp_reasons.append(
-            f"CMEGP age limit is exceeded for this category "
-            f"(maximum {cmegp_upper_age})."
+            f"Age exceeds CMEGP maximum threshold for {category} ({cmegp_upper_age} years)."
         )
 
     pmegp_qualifies = not pmegp_reasons
     cmegp_qualifies = not cmegp_reasons
-    pmegp_calculation = margin_calc(
+
+    pmegp_calc = margin_calc(
         project_cost,
         normalized_activity,
         normalized_category,
         normalized_area,
         "PMEGP",
     )
-    cmegp_calculation = margin_calc(
+    cmegp_calc = margin_calc(
         project_cost,
         normalized_activity,
         normalized_category,
         normalized_area,
         "CMEGP",
     )
+
     results["PMEGP"] = {
         "qualifies": pmegp_qualifies,
-        "reasons": pmegp_reasons
-        or ["Applicant age and project-cost cap are within the available rules."],
-        "calculation": pmegp_calculation if pmegp_qualifies else None,
+        "reasons": pmegp_reasons or ["Applicant age, sector, and project cost comply with all PMEGP guidelines."],
+        "calculation": pmegp_calc if pmegp_qualifies else None,
     }
     results["CMEGP"] = {
         "qualifies": cmegp_qualifies,
-        "reasons": cmegp_reasons
-        or ["Applicant age and project-cost cap are within the available rules."],
-        "calculation": cmegp_calculation if cmegp_qualifies else None,
+        "reasons": cmegp_reasons or ["Applicant age, sector, and project cost comply with all CMEGP guidelines."],
+        "calculation": cmegp_calc if cmegp_qualifies else None,
     }
     return results
 
@@ -177,181 +247,333 @@ def margin_calc(
         return None
 
 
-def render_status(name: str, fit: dict[str, Any]) -> None:
-    st.subheader(name)
-    if fit["qualifies"]:
-        st.markdown('<div class="status-ok">You qualify</div>', unsafe_allow_html=True)
+# ==========================================
+# SIDEBAR
+# ==========================================
+with st.sidebar:
+    st.image("https://img.icons8.com/fluency/96/handshake-heart.png", width=64)
+    st.title("UdyamSathi")
+    st.caption("AI-Powered Scheme Discovery for Maharashtra")
+
+    st.markdown("---")
+    st.subheader("🌐 API Connection")
+
+    api_choice = st.radio(
+        "Backend Server",
+        ["Production (Render)", "Localhost (Port 8000)", "Custom URL"],
+        index=0,
+    )
+
+    if api_choice == "Production (Render)":
+        active_api = "https://udyamsaathi-14cw.onrender.com"
+    elif api_choice == "Localhost (Port 8000)":
+        active_api = "http://127.0.0.1:8000"
     else:
-        st.markdown(
-            '<div class="status-no">Not qualified</div>', unsafe_allow_html=True
-        )
-    for reason in fit["reasons"]:
-        st.markdown(f"- {reason}")
-    calculation = fit["calculation"]
-    if calculation:
-        st.markdown("#### Estimated finance")
-        metric_columns = st.columns(3)
-        metric_columns[0].metric("Subsidy", f"Rs {calculation['subsidy_amount']:,.0f}")
-        metric_columns[1].metric(
-            "Your contribution", f"Rs {calculation['own_contribution']:,.0f}"
-        )
-        metric_columns[2].metric(
-            "Bank loan", f"Rs {calculation['bank_loan_amount']:,.0f}"
-        )
+        active_api = st.text_input("Enter API Base URL", value=DEFAULT_API_URL).rstrip("/")
+
+    # Check backend connectivity with latency ping
+    t0 = time.perf_counter()
+    backend_ok = False
+    ping_ms = 0.0
+    try:
+        res = requests.get(f"{active_api}/health", timeout=5)
+        ping_ms = (time.perf_counter() - t0) * 1000
+        backend_ok = res.status_code == 200 and res.json().get("status") == "ok"
+    except (requests.RequestException, ValueError):
+        backend_ok = False
+
+    if backend_ok:
+        st.success(f"Connected ({ping_ms:.0f} ms)")
+    else:
+        st.error("API Offline / Unreachable")
+
+    st.markdown("---")
+    st.subheader("💡 Example Questions")
+    example_prompts = [
+        "What is the PMEGP subsidy rate for rural women?",
+        "What is the maximum cost for a manufacturing unit under CMEGP?",
+        "Can a family apply for two different PMEGP businesses?",
+        "What are the 2025 MSME micro enterprise limits?",
+        "Has my loan application been approved?",
+    ]
+    for prompt in example_prompts:
+        if st.button(prompt, use_container_width=True):
+            st.session_state["queued_prompt"] = prompt
+
+    st.markdown("---")
+    if st.button("🗑️ Clear Chat History", use_container_width=True):
+        st.session_state.messages = []
+        st.rerun()
+
+    st.caption("Built for Maharashtra MSME Development • 2026")
 
 
+# ==========================================
+# MAIN PAGE HEADER
+# ==========================================
 st.markdown(
     """
     <div class="hero">
-      <h1>UdyamSathi</h1>
-      <p>Government scheme guidance, subsidy estimates, and PMEGP/CMEGP comparison.</p>
+      <h1>🌱 UdyamSathi (उद्यमसाथी)</h1>
+      <p>Instant government scheme discovery, side-by-side PMEGP vs CMEGP qualification, and policy-grounded financial subsidy estimation.</p>
     </div>
     """,
     unsafe_allow_html=True,
 )
 
-try:
-    health = requests.get(f"{API_URL}/health", timeout=5)
-    backend_ok = health.ok
-except requests.RequestException:
-    backend_ok = False
+tab_fit, tab_chat, tab_directory = st.tabs([
+    "⚖️ Scheme-Fit Comparator",
+    "💬 AI Policy Advisor",
+    "📚 Official Scheme Directory",
+])
 
-if backend_ok:
-    st.success("Live API connected")
-else:
-    st.error(
-        "FastAPI is not reachable. Start it with "
-        "`python -m uvicorn app.main:app --reload`."
+
+# ==========================================
+# TAB 1: SCHEME-FIT COMPARATOR (SIGNATURE)
+# ==========================================
+with tab_fit:
+    st.markdown("### ⚖️ Side-by-Side Scheme Qualification & Capital Breakdown")
+    st.caption(
+        "Evaluate your project simultaneously against the Prime Minister Employment Generation Programme (PMEGP) "
+        "and Chief Minister Employment Generation Programme (CMEGP)."
     )
 
-tab_chat, tab_fit = st.tabs(["💬 Ask UdyamSathi", "⚖️ Scheme-fit table"])
+    with st.container():
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+        col1, col2, col3 = st.columns([1, 1, 1.2])
 
+        with col1:
+            age = st.number_input("Applicant Age", min_value=15, max_value=85, value=28, help="PMEGP min 18; CMEGP 18-45 (relaxed to 50 for special categories)")
+            category = st.selectbox(
+                "Social Category",
+                [
+                    "General",
+                    "Special category",
+                    "Women",
+                    "SC",
+                    "ST",
+                    "OBC",
+                    "Minorities",
+                    "Ex-servicemen",
+                    "Differently abled",
+                ],
+                help="Special category applicants receive 10% higher margin money subsidy and lower own contribution requirements.",
+            )
+
+        with col2:
+            area = st.selectbox("Project Location", ["Rural", "Urban"], help="Rural units qualify for up to 35% subsidy compared to 25% for urban.")
+            activity = st.selectbox("Sector / Activity", ["Manufacturing", "Service"], help="Statutory caps: Rs 50 Lakh for Manufacturing; Rs 20 Lakh for Service.")
+
+        with col3:
+            project_cost_lakh = st.slider(
+                "Project Cost (Rs. in Lakhs)",
+                min_value=1.0,
+                max_value=60.0,
+                value=15.0,
+                step=0.5,
+                help="Adjust to verify cap compliance and estimated subsidy amounts.",
+            )
+            cost_in_rupees = float(project_cost_lakh) * 100_000
+
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    # Calculate real-time fit
+    fit_data = scheme_fit(
+        int(age),
+        category,
+        area,
+        activity,
+        cost_in_rupees,
+    )
+
+    res_col1, res_col2 = st.columns(2)
+
+    for col, (scheme_name, scheme_info) in zip([res_col1, res_col2], fit_data.items(), strict=False):
+        with col:
+            st.markdown('<div class="card">', unsafe_allow_html=True)
+            st.markdown(f"### {scheme_name}")
+
+            if scheme_info["qualifies"]:
+                st.markdown('<div class="status-ok">✅ You Qualify</div>', unsafe_allow_html=True)
+            else:
+                st.markdown('<div class="status-no">❌ Currently Ineligible</div>', unsafe_allow_html=True)
+
+            st.markdown("**Eligibility Criteria Checklist:**")
+            for reason in scheme_info["reasons"]:
+                icon = "✅" if scheme_info["qualifies"] else "⚠️"
+                st.markdown(f"{icon} {reason}")
+
+            calc = scheme_info.get("calculation")
+            if calc:
+                st.markdown("---")
+                st.markdown("#### 💰 Financial Structure")
+
+                m1, m2, m3 = st.columns(3)
+                m1.metric("Subsidy Grant", f"₹{calc['subsidy_amount']:,.0f}", help="Government margin money grant")
+                m2.metric("Your Contribution", f"₹{calc['own_contribution']:,.0f}", help="Required applicant equity")
+                m3.metric("Bank Term Loan", f"₹{calc['bank_loan_amount']:,.0f}", help="Bank finance portion")
+
+                # Visual distribution progress bar
+                sub_ratio = calc["subsidy_amount"] / calc["project_cost"]
+                own_ratio = calc["own_contribution"] / calc["project_cost"]
+                st.caption(f"Financial Ratio: **{sub_ratio * 100:.0f}% Subsidy** | **{own_ratio * 100:.0f}% Own** | **{(1 - sub_ratio - own_ratio) * 100:.0f}% Bank Finance**")
+                st.progress(sub_ratio)
+
+            st.markdown("</div>", unsafe_allow_html=True)
+
+
+# ==========================================
+# TAB 2: AI POLICY ADVISOR (CHAT)
+# ==========================================
 with tab_chat:
-    st.caption("Ask about eligibility, subsidy, project limits, or scheme rules.")
-    api_mode = st.radio(
-        "Answer route",
-        ["RAG /ask", "Agent /agent"],
-        horizontal=True,
-        key="answer_route",
-        help="Use /ask for grounded citation search or /agent for the LangGraph route.",
-    )
+    st.markdown("### 💬 Ask UdyamSathi")
+    st.caption("Ask questions about government circulars, eligibility, educational requirements, or subsidy procedures.")
+
+    route_col, _ = st.columns([2, 3])
+    with route_col:
+        api_mode = st.radio(
+            "Orchestration Mode",
+            ["Grounded RAG (/ask)", "LangGraph Agent (/agent)"],
+            horizontal=True,
+            help="RAG searches official Bank of Maharashtra document chunks with strict citations. LangGraph agent routes calculations and manages approval states.",
+        )
+
     if "messages" not in st.session_state:
         st.session_state.messages = []
 
+    # Display chat history
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
-            if message["role"] == "assistant" and message.get("citations"):
-                with st.expander("Sources"):
-                    for index, citation in enumerate(message["citations"], start=1):
-                        st.markdown(
-                            f"**[{index}] {citation.get('title', 'Source')}** — "
-                            f"{citation.get('source', 'unknown')} p.{citation.get('page', 1)}"
-                        )
+            if message["role"] == "assistant":
+                if message.get("telemetry"):
+                    st.markdown(
+                        f"<div class='telemetry-pill'>⚡ Latency: {message['telemetry'].get('latency', 'N/A')} ms | "
+                        f"Tokens: {message['telemetry'].get('tokens', 'N/A')} | "
+                        f"Cache: {message['telemetry'].get('cache', 'N/A')}</div>",
+                        unsafe_allow_html=True,
+                    )
+                if message.get("citations"):
+                    with st.expander("📄 Source Citations"):
+                        for idx, cit in enumerate(message["citations"], start=1):
+                            st.markdown(
+                                f"**[{idx}] {cit.get('title', 'Official Source')}**\n\n"
+                                f"Document: `{cit.get('source', 'unknown')}` | Page: `{cit.get('page', 1)}`"
+                            )
 
-    question = st.chat_input("Ask a UdyamSathi question")
-    if question:
-        st.session_state.messages.append({"role": "user", "content": question})
+    # Handle queued prompt from sidebar or new chat input
+    user_input = st.chat_input("Ask a question about MSME schemes in Maharashtra...")
+    if st.session_state.get("queued_prompt"):
+        user_input = st.session_state.pop("queued_prompt")
+
+    if user_input:
+        st.session_state.messages.append({"role": "user", "content": user_input})
         with st.chat_message("user"):
-            st.markdown(question)
-        with (
-            st.chat_message("assistant"),
-            st.spinner("Searching UdyamSathi sources..."),
-        ):
+            st.markdown(user_input)
+
+        with st.chat_message("assistant"), st.spinner("Analyzing official policy sources..."):
             try:
-                if api_mode == "RAG /ask":
-                    payload = post_json("/ask", {"question": question, "top_k": 5})
+                t_start = time.perf_counter()
+                if api_mode == "Grounded RAG (/ask)":
+                    payload, headers = post_json(active_api, "/ask", {"question": user_input, "top_k": 5})
                     answer = str(payload.get("answer", "I don't know"))
                     citations = payload.get("citations", [])
                 else:
-                    payload = post_json(
+                    payload, headers = post_json(
+                        active_api,
                         "/agent",
                         {
-                            "question": question,
+                            "question": user_input,
                             "approved": False,
-                            "thread_id": "streamlit-session",
+                            "thread_id": "streamlit-web-session",
                         },
                     )
-                    agent_answer = payload.get("answer", {})
-                    answer = str(agent_answer.get("answer", "I don't know"))
-                    citations = agent_answer.get("citations", [])
+                    agent_ans = payload.get("answer", {})
+                    answer = str(agent_ans.get("answer", "I don't know"))
+                    citations = agent_ans.get("citations", [])
+
+                latency_str = headers.get("x-latency-ms", f"{(time.perf_counter() - t_start) * 1000:.1f}")
+                tokens_str = headers.get("x-tokens-estimated", "N/A")
+                cache_str = headers.get("x-cache", "MISS")
+
                 st.markdown(answer)
+
+                st.markdown(
+                    f"<div class='telemetry-pill'>⚡ Latency: {latency_str} ms | "
+                    f"Tokens: {tokens_str} | "
+                    f"Cache: {cache_str}</div>",
+                    unsafe_allow_html=True,
+                )
+
                 if citations:
-                    with st.expander("Sources"):
-                        for index, citation in enumerate(citations, start=1):
+                    with st.expander("📄 Source Citations"):
+                        for idx, cit in enumerate(citations, start=1):
                             st.markdown(
-                                f"**[{index}] {citation.get('title', 'Source')}** — "
-                                f"{citation.get('source', 'unknown')} p.{citation.get('page', 1)}"
+                                f"**[{idx}] {cit.get('title', 'Official Source')}**\n\n"
+                                f"Document: `{cit.get('source', 'unknown')}` | Page: `{cit.get('page', 1)}`"
                             )
+
                 st.session_state.messages.append(
                     {
                         "role": "assistant",
                         "content": answer,
                         "citations": citations,
-                        "question": question,
+                        "telemetry": {
+                            "latency": latency_str,
+                            "tokens": tokens_str,
+                            "cache": cache_str,
+                        },
                     }
                 )
-                feedback_left, feedback_right, _ = st.columns([1, 1, 8])
-                if feedback_left.button(
-                    "👍 Helpful", key=f"up-{len(st.session_state.messages)}"
-                ):
-                    save_feedback(question, answer, "thumbs_up")
+
+                fb_col1, fb_col2, _ = st.columns([1, 1, 8])
+                if fb_col1.button("👍 Helpful", key=f"thumb-up-{len(st.session_state.messages)}"):
+                    save_feedback(user_input, answer, "thumbs_up")
                     st.toast("Thank you for your feedback!")
-                if feedback_right.button(
-                    "👎 Not helpful", key=f"down-{len(st.session_state.messages)}"
-                ):
-                    save_feedback(question, answer, "thumbs_down")
-                    st.toast("Feedback saved.")
-            except requests.RequestException as error:
-                st.error(f"UdyamSathi API request failed: {error}")
+                if fb_col2.button("👎 Not helpful", key=f"thumb-down-{len(st.session_state.messages)}"):
+                    save_feedback(user_input, answer, "thumbs_down")
+                    st.toast("Feedback recorded.")
 
-with tab_fit:
-    st.subheader("Compare PMEGP and CMEGP")
-    st.caption(
-        "A pre-screening estimate based on the stored scheme rules. Final eligibility depends on the lender."
-    )
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        age = st.number_input("Age", min_value=15, max_value=100, value=30)
-        category = st.selectbox(
-            "Category",
-            [
-                "General",
-                "Special category",
-                "Women",
-                "SC",
-                "ST",
-                "OBC",
-                "Minorities",
-                "Ex-servicemen",
-                "Differently abled",
-            ],
-        )
-    with col2:
-        area = st.selectbox("Area", ["Rural", "Urban"])
-        activity = st.selectbox("Activity", ["Manufacturing", "Service"])
-    with col3:
-        project_cost_lakh = st.number_input(
-            "Project cost (Rs lakh)",
-            min_value=0.1,
-            max_value=100.0,
-            value=10.0,
-            step=0.5,
-        )
-        calculate = st.button(
-            "Compare schemes", type="primary", use_container_width=True
-        )
+            except requests.RequestException as err:
+                st.error(f"API Request Failed: {err}")
 
-    if calculate:
-        fit = scheme_fit(
-            int(age),
-            category,
-            area,
-            activity,
-            float(project_cost_lakh) * 100_000,
-        )
-        left, right = st.columns(2)
-        with left:
-            render_status("PMEGP", fit["PMEGP"])
-        with right:
-            render_status("CMEGP", fit["CMEGP"])
+
+# ==========================================
+# TAB 3: SCHEME DIRECTORY
+# ==========================================
+with tab_directory:
+    st.markdown("### 📚 Official MSME Policy & Limits Directory")
+    st.caption("Browse structured data extracted directly from Bank of Maharashtra official publications.")
+
+    search_term = st.text_input("🔍 Search schemes by keyword", placeholder="e.g. mudra, manufacturing, women, education")
+
+    try:
+        records_resp = requests.get(f"{active_api}/records?limit=50", timeout=10)
+        if records_resp.ok:
+            all_records = records_resp.json()
+            if search_term.strip():
+                filtered = [
+                    r for r in all_records
+                    if search_term.casefold() in str(r).casefold()
+                ]
+            else:
+                filtered = all_records
+
+            st.write(f"Showing **{len(filtered)}** matching official records:")
+            for item in filtered:
+                with st.expander(f"📌 {item.get('scheme_name', 'Scheme Record')}"):
+                    c1, c2 = st.columns(2)
+                    with c1:
+                        st.markdown(f"**Max Project Cost:** `{item.get('max_project_cost', 'N/A')}`")
+                        st.markdown(f"**Subsidy (General):** `{item.get('subsidy_general', 'N/A')}`")
+                        st.markdown(f"**Subsidy (Special):** `{item.get('subsidy_special', 'N/A')}`")
+                    with c2:
+                        st.markdown(f"**Applicant Contribution:** `{item.get('own_contribution', 'N/A')}`")
+                        st.markdown(f"**Category:** `{item.get('category', 'scheme')}`")
+                        st.markdown(f"**Record ID:** `{item.get('id', 'N/A')}`")
+                    st.markdown("---")
+                    st.markdown(f"**Eligibility Details:**\n\n{item.get('eligibility', 'N/A')}")
+        else:
+            st.warning("Could not fetch records list from the backend API.")
+    except (requests.RequestException, ValueError) as exc:
+        st.info(f"Connect to a live backend to explore the full directory: {exc}")
