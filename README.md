@@ -170,3 +170,27 @@ Open `http://127.0.0.1:8501/`. The interface provides:
 Screenshot:
 
 ![UdyamSathi Checkpoint 2 UI](docs/checkpoint-2-ui.png)
+
+## Run with Docker
+
+Start both the UdyamSathi FastAPI service and Streamlit UI in containers with Docker Compose:
+
+```powershell
+docker compose up --build
+```
+
+- API service: `http://127.0.0.1:8000` (interactive documentation at `/docs`, health check at `/health`)
+- UI service: `http://127.0.0.1:8501`
+
+To stop the containers:
+
+```powershell
+docker compose down
+```
+
+## CI/CD and Deployment
+
+- **Continuous Integration**: Managed via `.github/workflows/ci.yml`. On every push and pull request, GitHub Actions runs `ruff check .`, executes the pytest test suite (including records, search, `/health`, `/ask` with a fake LLM, and agent subsidy calculator), and validates the Docker build.
+- **Automated Deployment**: Configured for Render deployment using `render.yaml` with public health checks at `/health`.
+- **Live Deployment URL**: `https://udyamsaathi.onrender.com` (Health check: `https://udyamsaathi.onrender.com/health`)
+
