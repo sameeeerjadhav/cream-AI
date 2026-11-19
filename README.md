@@ -192,5 +192,5 @@ docker compose down
 
 - **Continuous Integration**: Managed via `.github/workflows/ci.yml`. On every push and pull request, GitHub Actions runs `ruff check .`, executes the pytest test suite (including records, search, `/health`, `/ask` with a fake LLM, and agent subsidy calculator), and validates the Docker build.
 - **Automated Deployment**: Configured for Render deployment using `render.yaml` with public health checks at `/health`.
-- **Live Deployment URL**: `https://udyamsaathi.onrender.com` (Health check: `https://udyamsaathi.onrender.com/health`)
+- **Live Deployment URL**: `https://cream-ai-rniy.onrender.com` (Health check: `https://cream-ai-rniy.onrender.com/health`)
 
