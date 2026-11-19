@@ -140,3 +140,86 @@ def margin_money_subsidy_calculator(
         "bank_loan_amount": bank_loan,
         "note": "Estimate only; final sanction and eligibility are decided by the implementing authority and lender.",
     }
+
+
+def msme_classification_checker(investment: float, turnover: float) -> dict[str, Any]:
+    """Classify enterprise based on statutory 2025 MSME investment and turnover limits.
+
+    - Micro: Investment <= Rs 1 Cr and Turnover <= Rs 5 Cr
+    - Small: Investment <= Rs 10 Cr and Turnover <= Rs 50 Cr
+    - Medium: Investment <= Rs 50 Cr and Turnover <= Rs 250 Cr
+    """
+    if investment < 0 or turnover < 0:
+        raise ValueError("Investment and turnover must be non-negative values")
+
+    # In Rupees (Crore to Rupees: 1 Cr = 10,000,000)
+    cr = 10_000_000.0
+
+    if investment <= 1.0 * cr and turnover <= 5.0 * cr:
+        tier = "Micro"
+        source_id = "msme-micro-2025"
+        description = "Investment in Plant & Machinery <= Rs 1 Crore and Annual Turnover <= Rs 5 Crore."
+    elif investment <= 10.0 * cr and turnover <= 50.0 * cr:
+        tier = "Small"
+        source_id = "msme-small-2025"
+        description = "Investment in Plant & Machinery <= Rs 10 Crore and Annual Turnover <= Rs 50 Crore."
+    elif investment <= 50.0 * cr and turnover <= 250.0 * cr:
+        tier = "Medium"
+        source_id = "msme-medium-2025"
+        description = "Investment in Plant & Machinery <= Rs 50 Crore and Annual Turnover <= Rs 250 Crore."
+    else:
+        tier = "Large / Beyond MSME"
+        source_id = "msme-beyond-limits"
+        description = "Enterprise exceeds the statutory composite thresholds for MSME classification."
+
+    return {
+        "classification": tier,
+        "source_record_id": source_id,
+        "investment": investment,
+        "turnover": turnover,
+        "statutory_definition": description,
+        "criteria_year": 2025,
+    }
+
+
+def eligibility_criteria_checker(
+    age: int,
+    category: str,
+    project_cost: float,
+    activity_type: str,
+    scheme: str,
+) -> dict[str, Any]:
+    """Validate core statutory criteria for PMEGP and CMEGP applications."""
+    if age < 0 or project_cost <= 0:
+        raise ValueError("Invalid age or project cost provided")
+
+    activity = _normalize(
+        activity_type, "activity_type", {"manufacturing": "manufacturing", "service": "service"}
+    )
+    scheme_name = _normalize(scheme, "scheme", {"pmegp": "pmegp", "cmegp": "cmegp"})
+    is_special = category.casefold() in {
+        "special", "sc", "st", "obc", "women", "woman", "minority", "ex_servicemen", "differently_abled"
+    }
+
+    caps = {"manufacturing": 5_000_000.0, "service": 2_000_000.0}
+    reasons = []
+
+    if age < 18:
+        reasons.append("Applicant must be at least 18 years of age.")
+
+    if project_cost > caps[activity]:
+        reasons.append(f"Project cost exceeds the Rs {caps[activity]:,.0f} limit for {activity}.")
+
+    if scheme_name == "cmegp":
+        max_age = 50 if is_special else 45
+        if age > max_age:
+            reasons.append(f"Applicant age exceeds the CMEGP threshold for this category ({max_age} years).")
+
+    eligible = len(reasons) == 0
+    return {
+        "scheme": scheme_name.upper(),
+        "is_eligible": eligible,
+        "reasons": reasons or ["All basic age, sector, and project cost criteria are satisfied."],
+        "activity_type": activity,
+        "project_cost": project_cost,
+    }
