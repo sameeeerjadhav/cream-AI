@@ -12,6 +12,12 @@ _model: SentenceTransformer | None = None
 def _get_model() -> SentenceTransformer:
     global _model
     if _model is None:
+        try:
+            import torch
+
+            torch.set_num_threads(1)
+        except ImportError:
+            pass
         _model = SentenceTransformer(MODEL_NAME)
     return _model
 

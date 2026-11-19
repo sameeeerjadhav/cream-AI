@@ -11,7 +11,8 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements-full.txt .
-RUN python -m pip install --no-cache-dir -r requirements-full.txt
+RUN python -m pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu \
+    && python -m pip install --no-cache-dir -r requirements-full.txt
 
 COPY app ./app
 COPY data ./data
