@@ -39,6 +39,16 @@ class AgentRequest(BaseModel):
     thread_id: str = Field(default="default", min_length=1, max_length=100)
 
 
+@app.get("/")
+def root() -> dict[str, str]:
+    return {
+        "message": "Welcome to UdyamSathi API",
+        "health": "/health",
+        "docs": "/docs",
+        "records": "/records",
+    }
+
+
 @app.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
