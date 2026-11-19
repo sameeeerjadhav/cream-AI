@@ -5,16 +5,7 @@ from typing import Any
 from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel, Field
 
-from app.graph import run_graph
-from app.llm import (
-    LLMConfigurationError,
-    LLMProviderError,
-    LLMResponseError,
-    chat,
-)
-from app.rag import answer_question
 from app.smart_search import load_records, search_records
-from app.vectorstore import semantic_search
 
 app = FastAPI(title="UdyamSathi API")
 records = load_records()
@@ -81,6 +72,8 @@ def semantic_search_endpoint(
     q: str = Query(min_length=1),
     limit: int = Query(default=5, ge=1, le=20),
 ) -> list[dict[str, Any]]:
+    from app.vectorstore import semantic_search
+
     return semantic_search(q, limit)
 
 
@@ -92,6 +85,13 @@ def ask_question(request: QuestionRequest) -> dict[str, Any]:
 
 @app.post("/chat")
 def chat_endpoint(request: ChatRequest) -> dict[str, str]:
+    from app.llm import (
+        LLMConfigurationError,
+        LLMProviderError,
+        LLMResponseError,
+        chat,
+    )
+
     context = search_records(records, request.question, limit=3)
     try:
         result = chat(request.question, context)
@@ -106,6 +106,13 @@ def chat_endpoint(request: ChatRequest) -> dict[str, str]:
 
 @app.post("/ask")
 def ask_endpoint(request: AskRequest) -> dict[str, Any]:
+    from app.llm import (
+        LLMConfigurationError,
+        LLMProviderError,
+        LLMResponseError,
+    )
+    from app.rag import answer_question
+
     try:
         result = answer_question(request.question, top_k=request.top_k)
     except (LLMConfigurationError, LLMProviderError, LLMResponseError) as error:
@@ -121,6 +128,8 @@ def ask_endpoint(request: AskRequest) -> dict[str, Any]:
 
 @app.post("/agent")
 def agent_endpoint(request: AgentRequest) -> dict[str, Any]:
+    from app.graph import run_graph
+
     calculator_args = (
         request.calculator.model_dump() if request.calculator is not None else None
     )
