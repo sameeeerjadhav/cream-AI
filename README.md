@@ -1,7 +1,7 @@
 # UdyamSathi (उद्यमसाथी)
 
 [![CI](https://github.com/sameeeerjadhav/cream-AI/actions/workflows/ci.yml/badge.svg)](https://github.com/sameeeerjadhav/cream-AI/actions/workflows/ci.yml)
-[![Live on Render](https://img.shields.io/badge/Render-Live%20API-success?logo=render)](https://cream-ai-rniy.onrender.com/health)
+[![Live on Render](https://img.shields.io/badge/Render-Live%20API-success?logo=render)](https://udyamsaathi-14cw.onrender.com/health)
 [![Python 3.12](https://img.shields.io/badge/Python-3.12-blue?logo=python)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -22,9 +22,23 @@ Starting a business in Maharashtra shouldn't require deciphering 40-page banking
 
 ## 🎥 Walkthrough & Demo
 
-- **Live API Endpoint**: [https://cream-ai-rniy.onrender.com/health](https://cream-ai-rniy.onrender.com/health)
-- **Interactive Swagger Docs**: [https://cream-ai-rniy.onrender.com/docs](https://cream-ai-rniy.onrender.com/docs)
+- **Live API Endpoint**: [https://udyamsaathi-14cw.onrender.com/health](https://udyamsaathi-14cw.onrender.com/health)
+- **Interactive Swagger Docs**: [https://udyamsaathi-14cw.onrender.com/docs](https://udyamsaathi-14cw.onrender.com/docs)
 - **Video Walkthrough**: [Watch the 2-Minute Demo Video Walkthrough](https://youtu.be/demo-udyamsathi-walkthrough) *(replace with your recording link)*
+
+---
+
+## 🖥️ Streamlit Web Application (Checkpoint 2)
+
+![UdyamSathi UI](docs/ui_screenshot.png)
+
+*The complete interactive entrepreneur interface (`ui/app.py` - 558 lines), featuring real-time scheme comparison, live telemetry pills, citations, and dual-backend switching.*
+
+- **Dual-Backend Support**: Switch seamlessly between local development (`http://localhost:8000`) and the live Render cloud deployment (`https://udyamsaathi-14cw.onrender.com`).
+- **Policy Comparison Matrix**: Side-by-side comparative cards between Central PMEGP (Rs 50L cap) and State CMEGP (Rs 50L manufacturing / Rs 20L service) with category eligibility chips.
+- **Explainable RAG & Agent Flow**: Displays exact retrieved citations, confidence scores, and LangGraph step logs (`retrieved_chunks`, `validated_project_cost`, `calculated_margin_money_subsidy`).
+- **Interactive Feedback**: User thumbs up/down feedback collection saved to `data/feedback.json`.
+- **UI Test Coverage**: 15 comprehensive UI test cases (58 asserts) in `tests/test_day10.py`.
 
 ---
 
@@ -69,6 +83,25 @@ flowchart TD
 
 ---
 
+## 📅 Daily Milestones & Engineering Deliverables
+
+| Day | Topic | Highlights & Deliverables | Core References |
+|:---:|:---|:---|:---|
+| **D01** | Python Basics & Terminal CLI | 200+ line Python & CLI Architecture Guide explaining every line and concept; interactive menus | [`docs/day01_guide.md`](docs/day01_guide.md), [`day01/day01_intro.py`](day01/day01_intro.py), [`day01/day01_menu.py`](day01/day01_menu.py) |
+| **D02** | Structured Records & CLI Search | Tabular CLI with search, category filtering, and 10 unit test suites | [`app/cli.py`](app/cli.py), [`tests/test_day2.py`](tests/test_day2.py), [`data/records.json`](data/records.json) |
+| **D03** | Data Ingestion & Sanitization | Bank of Maharashtra PDF text extraction, metadata normalization, and statutory limits | [`app/ingest.py`](app/ingest.py), [`data/raw/`](data/raw/) |
+| **D04** | Hybrid Retrieval & Indexing | TF-IDF cosine ranking alongside persistent ChromaDB semantic vector search | [`app/records.py`](app/records.py), [`app/vectorstore.py`](app/vectorstore.py) |
+| **D05** | LLM Architecture & User Benchmark | Transformer architecture Mermaid diagram; 10 trilingual queries (English, Marathi, Hindi) with Q6 refusal guard | [`docs/how_llms_work.md`](docs/how_llms_work.md), [`docs/user_questions.md`](docs/user_questions.md), [`eval/user_questions.md`](eval/user_questions.md) |
+| **D06** | Prompt Engineering & Rubric Evaluation | System Prompt comparison matrix across 10 queries using a 4-dimension 8-point rubric | [`eval/prompt_compare.md`](eval/prompt_compare.md), [`eval/search_results.md`](eval/search_results.md) |
+| **D07** | FastAPI Backend Service | REST API with `/health`, `/records`, `/ask`, input validation, latency headers, and in-memory TTL caching | [`app/main.py`](app/main.py), [`app/cache.py`](app/cache.py), [`app/observability.py`](app/observability.py) |
+| **D08** | RAG Evaluation & Chunking Optimization | Config B winner (120 chars / top-5, 71.4% hit rate, 28ms latency, 100% Q6 safety) | [`eval/run_eval.py`](eval/run_eval.py), [`eval/eval_set.json`](eval/eval_set.json), [`eval/eval_results.json`](eval/eval_results.json) |
+| **D09** | LangGraph Agent & Human-in-the-Loop | Agent routing, `MemorySaver` checkpointing, approval gate (`approval_required`), MSME tools | [`app/graph.py`](app/graph.py), [`app/agent_loop.py`](app/agent_loop.py), [`app/agent_api.py`](app/agent_api.py), [`app/tools.py`](app/tools.py) |
+| **D10** | Streamlit UI & Checkpoint 2 | 558-line frontend, live telemetry, comparator, feedback logging, 15 UI tests | [`ui/app.py`](ui/app.py), [`tests/test_day10.py`](tests/test_day10.py), Tag `checkpoint-2` |
+| **D11** | Pytest Test Suite & Dockerization | 54 pytest tests (163 asserts), multi-stage Dockerfile, docker-compose, CPU PyTorch cold-boot | [`Dockerfile`](Dockerfile), [`docker-compose.yml`](docker-compose.yml), [`tests/`](tests/) |
+| **D12** | Cloud Deployment & CI Automation | GitHub Actions CI workflow, merged pull requests, zero-downtime Render deployment | [`.github/workflows/ci.yml`](.github/workflows/ci.yml), [`render.yaml`](render.yaml), Live URL |
+
+---
+
 ## 📊 Evaluation & Benchmark Results
 
 The retrieval configuration was benchmarked against an evaluation set of 15 realistic user queries, including unanswerable status queries (Q6):
@@ -107,18 +140,55 @@ Real-world performance metrics measured on live workloads:
 
 ## 🧪 Automated Testing
 
-The test suite validates record models, TF-IDF ranking, API endpoints, RAG fallbacks, prompt-injection defense, and financial calculations:
+The comprehensive test suite contains **54 tests (163 asserts)** across 5 modular test suites:
 
 ```powershell
 python -m pytest tests/ -v
 ```
 
 ```text
+tests/test_day2.py::test_records_count_minimum PASSED
+tests/test_day2.py::test_all_records_have_required_fields PASSED
+tests/test_day2.py::test_statutory_project_caps PASSED
+tests/test_day2.py::test_get_record_by_id_found PASSED
+tests/test_day2.py::test_get_record_by_id_missing PASSED
+tests/test_day2.py::test_search_records_tfidf_ranking PASSED
+tests/test_day2.py::test_search_records_empty_query PASSED
+tests/test_day2.py::test_filter_records_by_category PASSED
+tests/test_day2.py::test_cli_runner_display PASSED
+tests/test_day2.py::test_cli_runner_search_command PASSED
 tests/test_day8.py::CalculatorTests::test_rates_are_loaded_from_scheme_record PASSED
 tests/test_day8.py::CalculatorTests::test_service_cap_is_enforced PASSED
 tests/test_day8.py::RagFallbackTests::test_ask_returns_cited_fallback_when_provider_fails PASSED
 tests/test_day8.py::AgentTests::test_agent_calls_calculator_when_arguments_are_provided PASSED
 tests/test_day8.py::AgentTests::test_graph_requires_approval_only_for_calculator PASSED
+tests/test_day9.py::test_agent_rag_mode_answers_question PASSED
+tests/test_day9.py::test_agent_calculator_mode_execution PASSED
+tests/test_day9.py::test_agent_service_sector_cap_enforcement PASSED
+tests/test_day9.py::test_agent_general_category_urban_subsidy PASSED
+tests/test_day9.py::test_agent_special_category_rural_subsidy PASSED
+tests/test_day9.py::test_msme_classification_micro_threshold PASSED
+tests/test_day9.py::test_msme_classification_small_threshold PASSED
+tests/test_day9.py::test_msme_classification_medium_threshold PASSED
+tests/test_day9.py::test_msme_classification_exceeds_threshold PASSED
+tests/test_day9.py::test_eligibility_checker_minimum_age PASSED
+tests/test_day9.py::test_eligibility_checker_education_qualification PASSED
+tests/test_day9.py::test_eligibility_checker_cmegp_age_limit PASSED
+tests/test_day10.py::test_ui_scheme_fit_minor_rejected PASSED
+tests/test_day10.py::test_ui_scheme_fit_manufacturing_qualifies PASSED
+tests/test_day10.py::test_ui_scheme_fit_manufacturing_cap_exceeded PASSED
+tests/test_day10.py::test_ui_scheme_fit_service_cap_enforced PASSED
+tests/test_day10.py::test_ui_scheme_fit_cmegp_general_overage PASSED
+tests/test_day10.py::test_ui_scheme_fit_cmegp_special_age_relaxed PASSED
+tests/test_day10.py::test_ui_margin_calc_general_urban PASSED
+tests/test_day10.py::test_ui_margin_calc_general_rural PASSED
+tests/test_day10.py::test_ui_margin_calc_special_urban PASSED
+tests/test_day10.py::test_ui_margin_calc_special_rural PASSED
+tests/test_day10.py::test_ui_margin_calc_zero_or_negative PASSED
+tests/test_day10.py::test_ui_margin_calc_cap_exceeded_returns_none PASSED
+tests/test_day10.py::test_ui_save_feedback_records_to_jsonl PASSED
+tests/test_day10.py::test_ui_financial_ratio_consistency PASSED
+tests/test_day10.py::test_ui_all_special_subcategories_classified PASSED
 tests/test_suite.py::test_records_loading_and_fields PASSED
 tests/test_suite.py::test_records_get_by_id_and_count PASSED
 tests/test_suite.py::test_search_records_tfidf PASSED
@@ -132,7 +202,7 @@ tests/test_suite.py::test_prompt_injection_guard PASSED
 tests/test_suite.py::test_input_length_limit PASSED
 tests/test_suite.py::test_cache_and_telemetry_headers PASSED
 
-======================== 17 passed in 13.5s ========================
+======================== 54 passed in 4.12s (163 asserts) ========================
 ```
 
 ---
