@@ -22,8 +22,8 @@ class CalculatorPayload(BaseModel):
     scheme: str = Field(min_length=1)
     project_cost: float = Field(gt=0)
     category: str = Field(min_length=1)
-    location: str = Field(min_length=1)
-    industry_type: str = Field(default="manufacturing")
+    rural_urban: str = Field(default="rural")
+    activity_type: str = Field(default="manufacturing")
 
 
 class AgentPayload(BaseModel):
