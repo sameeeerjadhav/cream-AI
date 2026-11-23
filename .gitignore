@@ -5,7 +5,7 @@ __pycache__/
 .mypy_cache/
 .ruff_cache/
 .env
-data/chroma/
+# data/chroma/ (tracked for zero-latency cloud deployment)
 data/ui_feedback.jsonl
 .coverage
 coverage.xml
