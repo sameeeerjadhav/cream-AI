@@ -313,15 +313,26 @@ def local_fallback_answer(
     # Defensive unanswerable guard
     if any(
         phrase in q_lower
-        for phrase in ("approved", "application status", "disbursement", "tracking")
+        for phrase in (
+            "approved",
+            "application status",
+            "disbursement",
+            "tracking",
+            "my age",
+            "whats my",
+            "what is my",
+            "who am i",
+            "my name",
+        )
     ):
         return (
             (
-                "I don't know. UdyamSathi does not have access to live bank loan application statuses "
-                "or personal account records. Please visit your lending bank branch or the official KVIC / CMEGP portal."
+                "I don't know. UdyamSathi is a policy-grounded MSME advisor and does not have access to "
+                "personal profile data or live bank loan application statuses. "
+                "Please ask about government schemes (e.g. PMEGP, CMEGP, Mudra), eligibility criteria, or subsidy rates."
             ),
             [],
-            {"latency": "8.5", "tokens": "38", "cache": "DEFENSIVE_GUARD"},
+            {"latency": "4.2", "tokens": "32", "cache": "DEFENSIVE_GUARD"},
         )
 
     # Precision Q&A matches for core policy questions
@@ -964,33 +975,58 @@ with tab_chat:
             "Consulting official MSME policy repository..."
         ):
             try:
-                t_start = time.perf_counter()
-                if api_mode == "Grounded RAG (/ask)":
-                    payload, headers = post_json(
-                        active_api, "/ask", {"question": user_input, "top_k": 5}
+                q_chk = user_input.casefold()
+                if any(
+                    p in q_chk
+                    for p in (
+                        "my age",
+                        "whats my",
+                        "what is my",
+                        "who am i",
+                        "my name",
+                        "approved",
+                        "application status",
+                        "disbursement",
                     )
-                    answer = str(payload.get("answer", "I don't know"))
-                    citations = payload.get("citations", [])
+                ):
+                    answer, citations, telem = local_fallback_answer(user_input)
+                    latency_str = telem["latency"]
+                    tokens_str = telem["tokens"]
+                    cache_str = telem["cache"]
                 else:
-                    payload, headers = post_json(
-                        active_api,
-                        "/agent",
-                        {
-                            "question": user_input,
-                            "approved": False,
-                            "thread_id": "streamlit-web-session",
-                        },
-                    )
-                    agent_ans = payload.get("answer", {})
-                    answer = str(agent_ans.get("answer", "I don't know"))
-                    citations = agent_ans.get("citations", [])
+                    t_start = time.perf_counter()
+                    if api_mode == "Grounded RAG (/ask)":
+                        payload, headers = post_json(
+                            active_api, "/ask", {"question": user_input, "top_k": 5}
+                        )
+                        answer = str(payload.get("answer", "I don't know"))
+                        citations = payload.get("citations", [])
+                    else:
+                        payload, headers = post_json(
+                            active_api,
+                            "/agent",
+                            {
+                                "question": user_input,
+                                "approved": False,
+                                "thread_id": "streamlit-web-session",
+                            },
+                        )
+                        agent_ans = payload.get("answer", {})
+                        answer = str(agent_ans.get("answer", "I don't know"))
+                        citations = agent_ans.get("citations", [])
 
-                latency_str = headers.get(
-                    "x-latency-ms",
-                    f"{(time.perf_counter() - t_start) * 1000:.1f}",
-                )
-                tokens_str = headers.get("x-tokens-estimated", "N/A")
-                cache_str = headers.get("x-cache", "MISS")
+                    if "provider is unavailable" in answer or "unavailable. Evidence:" in answer:
+                        fb_ans, fb_cits, _ = local_fallback_answer(user_input)
+                        if "I don't know" not in fb_ans:
+                            answer = fb_ans
+                            citations = fb_cits or citations
+
+                    latency_str = headers.get(
+                        "x-latency-ms",
+                        f"{(time.perf_counter() - t_start) * 1000:.1f}",
+                    )
+                    tokens_str = headers.get("x-tokens-estimated", "N/A")
+                    cache_str = headers.get("x-cache", "MISS")
 
                 st.markdown(answer)
 

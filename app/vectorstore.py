@@ -75,9 +75,12 @@ def semantic_search(query: str, limit: int = 5) -> list[dict[str, Any]]:
     return [
         {
             "text": (
-                f"{r.get('scheme_name')}: {r.get('description', '')}. "
-                f"Statutory limits: manufacturing Rs {r.get('statutory_cap_manufacturing_inr', 0):,}, "
-                f"service Rs {r.get('statutory_cap_service_inr', 0):,}."
+                f"{r.get('scheme_name')}: "
+                f"Max Project Cost: {r.get('max_project_cost', 'N/A')}. "
+                f"Subsidy (General): {r.get('subsidy_general', 'N/A')}. "
+                f"Subsidy (Special): {r.get('subsidy_special', 'N/A')}. "
+                f"Own Contribution: {r.get('own_contribution', 'N/A')}. "
+                f"Eligibility: {r.get('eligibility', 'N/A')[:220]}"
             ),
             "metadata": {
                 "source": "Bank of Maharashtra Official Records",

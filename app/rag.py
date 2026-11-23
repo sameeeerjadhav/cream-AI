@@ -31,6 +31,11 @@ def is_unanswerable_question(question: str) -> bool:
             "when will the money arrive",
             "disbursement date",
             "application status",
+            "my age",
+            "whats my",
+            "what is my",
+            "who am i",
+            "my name",
         )
     )
 
@@ -60,11 +65,11 @@ def answer_question(question: str, top_k: int = 5) -> RagResult:
     if is_unanswerable_question(question):
         return RagResult(
             answer=(
-                "I don't know. UdyamSathi does not have live application "
-                "status or disbursement data."
+                "I don't know. UdyamSathi is a policy-grounded MSME advisor and does not have access "
+                "to personal profile data or live bank application statuses."
             ),
             confidence="low",
-            follow_up="Please check with the bank or the official PMEGP portal.",
+            follow_up="Please ask about government schemes, eligibility criteria, or subsidy rates.",
             citations=[],
         )
     if not hits:
@@ -83,11 +88,11 @@ def answer_question(question: str, top_k: int = 5) -> RagResult:
             for hit in hits[:2]
             if str(hit.get("text", "")).strip()
         ]
-        evidence = " ".join(excerpts)
+        evidence = " \n\n• ".join(excerpts)
         if evidence:
             answer = (
-                "The retrieved UdyamSathi sources contain relevant information, "
-                f"but the answer-generation provider is unavailable. Evidence: {evidence[:900]}"
+                "The retrieved UdyamSathi sources contain relevant policy information: \n\n"
+                f"• {evidence[:900]}"
             )
         else:
             answer = "I don't know. No usable source evidence was retrieved."
