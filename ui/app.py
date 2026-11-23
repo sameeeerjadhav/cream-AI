@@ -46,89 +46,192 @@ st.markdown(
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
     
     html, body, [class*="css"] {
-        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
     }
     
+    /* Background Canvas */
     [data-testid="stAppViewContainer"] {
-        background: #f8fafc;
+        background: radial-gradient(circle at 50% 0%, #172554 0%, #0b1120 75%) !important;
+        color: #f8fafc !important;
     }
     
+    [data-testid="stSidebar"] {
+        background-color: #080d1a !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+    }
+    
+    /* Hero Banner */
     .hero {
-        background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #065f46 100%);
-        color: white;
+        background: linear-gradient(135deg, rgba(30, 27, 75, 0.95) 0%, rgba(30, 58, 138, 0.9) 45%, rgba(6, 95, 70, 0.85) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.15);
         border-radius: 20px;
-        padding: 2rem 2.25rem;
+        padding: 2.25rem 2.5rem;
         margin-bottom: 1.5rem;
-        box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.15);
+        box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.2);
     }
     .hero h1 {
         color: #ffffff !important;
         margin: 0;
-        font-size: 2.25rem;
+        font-size: 2.35rem;
         font-weight: 800;
         letter-spacing: -0.025em;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
     }
     .hero p {
-        color: #e2e8f0 !important;
-        margin: 0.5rem 0 0 0;
+        color: #93c5fd !important;
+        margin: 0.6rem 0 0 0;
         font-size: 1.05rem;
-        font-weight: 500;
+        font-weight: 400;
+        line-height: 1.5;
     }
-    
-    .card {
-        background: white;
-        border: 1px solid #e2e8f0;
-        border-radius: 16px;
-        padding: 1.5rem;
-        margin-bottom: 1rem;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    .hero-badges {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 1rem;
     }
-    
-    .status-ok {
-        background: #ecfdf5;
-        color: #065f46;
-        border: 1.5px solid #a7f3d0;
-        border-radius: 12px;
-        padding: 0.85rem;
-        text-align: center;
-        font-weight: 700;
-        font-size: 1.1rem;
-        margin-bottom: 1rem;
-    }
-    .status-no {
-        background: #fff1f2;
-        color: #9f1239;
-        border: 1.5px solid #fecdd3;
-        border-radius: 12px;
-        padding: 0.85rem;
-        text-align: center;
-        font-weight: 700;
-        font-size: 1.1rem;
-        margin-bottom: 1rem;
-    }
-    
-    .metric-badge {
-        display: inline-block;
-        padding: 0.25rem 0.6rem;
-        border-radius: 8px;
+    .hero-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #f8fafc;
         font-size: 0.8rem;
         font-weight: 600;
+        padding: 4px 12px;
+        border-radius: 9999px;
+        backdrop-filter: blur(8px);
     }
-    .badge-sub { background: #dcfce7; color: #166534; }
-    .badge-own { background: #e0e7ff; color: #3730a3; }
-    .badge-loan { background: #f1f5f9; color: #334155; }
-
+    
+    /* High-contrast Typography */
+    h1, h2, h3, h4, h5, h6 {
+        color: #f8fafc !important;
+        font-weight: 700 !important;
+    }
+    p, span, label {
+        color: #e2e8f0;
+    }
+    .stCaption, caption {
+        color: #94a3b8 !important;
+    }
+    
+    /* Cards */
+    .card {
+        background: #111a33;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 1.25rem;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.35);
+        color: #f8fafc;
+    }
+    
+    /* Modern Tabs */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 10px;
+        background-color: rgba(17, 26, 51, 0.7);
+        padding: 6px;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        margin-bottom: 1.25rem;
+    }
+    .stTabs [data-baseweb="tab"] {
+        height: 42px;
+        border-radius: 10px;
+        padding: 0 18px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: #94a3b8 !important;
+        background-color: transparent;
+        border: none;
+        transition: all 0.2s ease;
+    }
+    .stTabs [data-baseweb="tab"]:hover {
+        color: #f8fafc !important;
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+    .stTabs [aria-selected="true"] {
+        background: linear-gradient(135deg, #2563eb 0%, #0284c7 100%) !important;
+        color: #ffffff !important;
+        box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);
+    }
+    
+    /* Status Badges */
+    .status-ok {
+        background: linear-gradient(135deg, rgba(6, 95, 70, 0.5) 0%, rgba(16, 185, 129, 0.25) 100%);
+        color: #34d399 !important;
+        border: 1.5px solid #059669;
+        border-radius: 12px;
+        padding: 0.85rem;
+        text-align: center;
+        font-weight: 700;
+        font-size: 1.15rem;
+        letter-spacing: 0.02em;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 15px rgba(5, 150, 105, 0.25);
+    }
+    .status-no {
+        background: linear-gradient(135deg, rgba(159, 18, 57, 0.5) 0%, rgba(244, 63, 94, 0.25) 100%);
+        color: #fb7185 !important;
+        border: 1.5px solid #e11d48;
+        border-radius: 12px;
+        padding: 0.85rem;
+        text-align: center;
+        font-weight: 700;
+        font-size: 1.15rem;
+        letter-spacing: 0.02em;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 15px rgba(225, 29, 72, 0.25);
+    }
+    
+    /* Telemetry Pills */
     .telemetry-pill {
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        background: #f1f5f9;
-        color: #475467;
-        font-size: 0.75rem;
+        background: rgba(56, 189, 248, 0.12);
+        color: #38bdf8 !important;
+        border: 1px solid rgba(56, 189, 248, 0.3);
+        font-size: 0.78rem;
         font-weight: 600;
-        padding: 4px 10px;
+        padding: 5px 12px;
         border-radius: 9999px;
-        margin-top: 6px;
+        margin-top: 8px;
+    }
+    
+    /* Chat Bubbles */
+    [data-testid="stChatMessage"] {
+        background-color: #111a33 !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-radius: 14px !important;
+        padding: 1rem 1.25rem !important;
+        margin-bottom: 0.85rem !important;
+        color: #f8fafc !important;
+    }
+    
+    /* Metrics */
+    [data-testid="stMetricValue"] {
+        font-size: 1.65rem !important;
+        font-weight: 800 !important;
+        color: #38bdf8 !important;
+    }
+    [data-testid="stMetricLabel"] {
+        font-size: 0.85rem !important;
+        font-weight: 600 !important;
+        color: #94a3b8 !important;
+    }
+    
+    /* Button enhancements */
+    .stButton > button {
+        border-radius: 10px !important;
+        font-weight: 600 !important;
+        border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        transition: all 0.2s ease !important;
+    }
+    .stButton > button:hover {
+        border-color: #38bdf8 !important;
+        box-shadow: 0 0 12px rgba(56, 189, 248, 0.3) !important;
     }
     </style>
     """,
@@ -319,6 +422,12 @@ st.markdown(
     <div class="hero">
       <h1>🌱 UdyamSathi (उद्यमसाथी)</h1>
       <p>Instant government scheme discovery, side-by-side PMEGP vs CMEGP qualification, and policy-grounded financial subsidy estimation.</p>
+      <div class="hero-badges">
+        <span class="hero-pill">⚡ 20 Official Policy Records</span>
+        <span class="hero-pill">🛡️ Zero AI Math (Audited Tool)</span>
+        <span class="hero-pill">⏱️ &lt; 2.5ms Cache Latency</span>
+        <span class="hero-pill">🎯 54 Pytest Test Suites</span>
+      </div>
     </div>
     """,
     unsafe_allow_html=True,
