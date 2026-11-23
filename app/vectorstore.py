@@ -63,7 +63,7 @@ def semantic_search(query: str, limit: int = 5) -> list[dict[str, Any]]:
                 result["distances"][0],
             )
         ]
-    except Exception:
+    except Exception:  # noqa: BLE001
         # High-resilience fallback: if cloud RAM is constrained, use fast TF-IDF matching
         from app.smart_search import load_records, search_records
 

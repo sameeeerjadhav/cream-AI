@@ -1,13 +1,21 @@
 """Generate a high-polish, professional Demo Day PDF for UdyamSathi using ReportLab."""
 
 import os
-from reportlab.lib.pagesizes import letter
+
 from reportlab.lib import colors
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.platypus import (
-    SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak, KeepTogether, HRFlowable
-)
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.pdfgen import canvas
+from reportlab.platypus import (
+    HRFlowable,
+    PageBreak,
+    Paragraph,
+    SimpleDocTemplate,
+    Spacer,
+    Table,
+    TableStyle,
+)
+
 
 class NumberedCanvas(canvas.Canvas):
     """Two-pass canvas to dynamically compute and print 'Page X of Y'."""
@@ -71,7 +79,6 @@ def build_pdf(filename="docs/UdyamSathi_Demo_Day_Master_Guide.pdf"):
     dark_neutral = colors.HexColor("#0f172a") # Slate 900
     light_bg = colors.HexColor("#f8fafc")    # Slate 50
     border_color = colors.HexColor("#cbd5e1")# Slate 300
-    accent = colors.HexColor("#d97706")      # Amber
 
     title_style = ParagraphStyle(
         "DocTitle",
@@ -121,19 +128,6 @@ def build_pdf(filename="docs/UdyamSathi_Demo_Day_Master_Guide.pdf"):
         leading=13,
         textColor=dark_neutral,
         spaceAfter=5
-    )
-    body_bold = ParagraphStyle(
-        "BodyDarkBold",
-        parent=body_style,
-        fontName="Helvetica-Bold"
-    )
-    callout_style = ParagraphStyle(
-        "CalloutText",
-        parent=styles["Normal"],
-        fontName="Helvetica",
-        fontSize=8.5,
-        leading=12,
-        textColor=colors.HexColor("#1e293b")
     )
     table_cell = ParagraphStyle(
         "TableCell",

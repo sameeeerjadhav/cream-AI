@@ -4,8 +4,8 @@ Forwards execution to ui/app.py so both 'streamlit_app.py' and 'ui/app.py'
 work as valid main file paths on Streamlit Cloud.
 """
 
-from pathlib import Path
 import runpy
+from pathlib import Path
 
 UI_APP_PATH = Path(__file__).resolve().parent / "ui" / "app.py"
 

@@ -5,6 +5,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import os
+import sys
 import time
 import uuid
 from datetime import UTC, datetime
@@ -15,6 +16,8 @@ import requests
 import streamlit as st
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 TOOLS_SPEC = importlib.util.spec_from_file_location(
     "udyamsaathi_tools", ROOT / "app" / "tools.py"
 )
