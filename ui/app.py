@@ -40,10 +40,11 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+# Custom High-End Styling
 st.markdown(
     """
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
     html, body, [class*="css"] {
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
@@ -51,7 +52,7 @@ st.markdown(
 
     /* Full canvas background: Deep sapphire midnight */
     [data-testid="stAppViewContainer"] {
-        background: radial-gradient(circle at 50% 0%, #0f172a 0%, #070b14 80%) !important;
+        background: radial-gradient(circle at 50% 0%, #0f172a 0%, #070b14 85%) !important;
         color: #f8fafc !important;
     }
 
@@ -60,46 +61,72 @@ st.markdown(
         border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
     }
 
-    /* Hero Banner: Premium emerald & deep sapphire gradient */
+    /* Native container borders: Elevated glassmorphic cards */
+    div[data-testid="stVerticalBlockBorderWrapper"] {
+        background: rgba(15, 23, 42, 0.72) !important;
+        border: 1px solid rgba(56, 189, 248, 0.16) !important;
+        border-radius: 16px !important;
+        padding: 1.5rem !important;
+        margin-bottom: 1.25rem !important;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.45) !important;
+        backdrop-filter: blur(12px) !important;
+    }
+
+    /* Hero Banner: Luxury emerald & sapphire mesh */
     .hero {
-        background: linear-gradient(135deg, rgba(6, 78, 59, 0.9) 0%, rgba(15, 46, 90, 0.85) 50%, rgba(17, 24, 39, 0.95) 100%);
-        border: 1px solid rgba(56, 189, 248, 0.25);
+        background: linear-gradient(135deg, rgba(6, 78, 59, 0.92) 0%, rgba(12, 74, 110, 0.88) 55%, rgba(15, 23, 42, 0.98) 100%);
+        border: 1px solid rgba(56, 189, 248, 0.3);
         border-radius: 20px;
-        padding: 2rem 2.25rem;
+        padding: 2.25rem 2.5rem;
         margin-bottom: 1.5rem;
-        box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.15);
+        box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.65), inset 0 1px 2px rgba(255, 255, 255, 0.2);
+    }
+    .hero-portal-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        color: #e0f2fe;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        padding: 3px 10px;
+        border-radius: 9999px;
+        margin-bottom: 0.75rem;
     }
     .hero h1 {
         color: #ffffff !important;
         margin: 0;
-        font-size: 2.25rem;
+        font-size: 2.35rem;
         font-weight: 800;
         letter-spacing: -0.025em;
         text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
     }
     .hero p {
         color: #bae6fd !important;
-        margin: 0.5rem 0 0 0;
-        font-size: 1.02rem;
+        margin: 0.6rem 0 0 0;
+        font-size: 1.05rem;
         font-weight: 400;
-        line-height: 1.5;
+        line-height: 1.55;
     }
     .hero-badges {
         display: flex;
         gap: 10px;
         flex-wrap: wrap;
-        margin-top: 1rem;
+        margin-top: 1.25rem;
     }
     .hero-pill {
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        background: rgba(255, 255, 255, 0.08);
-        border: 1px solid rgba(255, 255, 255, 0.15);
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.18);
         color: #f8fafc;
-        font-size: 0.8rem;
+        font-size: 0.82rem;
         font-weight: 600;
-        padding: 4px 12px;
+        padding: 5px 14px;
         border-radius: 9999px;
         backdrop-filter: blur(8px);
     }
@@ -116,30 +143,19 @@ st.markdown(
         color: #94a3b8 !important;
     }
 
-    /* Glassmorphic Cards */
-    .card {
-        background: rgba(15, 23, 42, 0.85);
-        border: 1px solid rgba(255, 255, 255, 0.09);
-        border-radius: 16px;
-        padding: 1.5rem;
-        margin-bottom: 1.25rem;
-        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
-        color: #f8fafc;
-    }
-
-    /* Modern Tabs */
+    /* Modern Tabs Pill Bar */
     .stTabs [data-baseweb="tab-list"] {
         gap: 10px;
-        background-color: rgba(15, 23, 42, 0.7);
+        background-color: rgba(15, 23, 42, 0.85);
         padding: 6px;
         border-radius: 14px;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        margin-bottom: 1.25rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        margin-bottom: 1.5rem;
     }
     .stTabs [data-baseweb="tab"] {
-        height: 42px;
+        height: 44px;
         border-radius: 10px;
-        padding: 0 20px;
+        padding: 0 24px;
         font-weight: 600;
         font-size: 0.95rem;
         color: #94a3b8 !important;
@@ -149,70 +165,82 @@ st.markdown(
     }
     .stTabs [data-baseweb="tab"]:hover {
         color: #ffffff !important;
-        background-color: rgba(255, 255, 255, 0.06);
+        background-color: rgba(255, 255, 255, 0.08);
     }
     .stTabs [aria-selected="true"] {
         background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
         color: #ffffff !important;
-        box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);
+        box-shadow: 0 4px 14px rgba(2, 132, 199, 0.45);
     }
 
     /* Status Badges */
     .status-ok {
-        background: linear-gradient(135deg, rgba(6, 95, 70, 0.4) 0%, rgba(16, 185, 129, 0.2) 100%);
+        background: linear-gradient(135deg, rgba(6, 95, 70, 0.5) 0%, rgba(16, 185, 129, 0.25) 100%);
         color: #34d399 !important;
         border: 1.5px solid #059669;
         border-radius: 12px;
         padding: 0.85rem;
         text-align: center;
-        font-weight: 700;
-        font-size: 1.1rem;
-        letter-spacing: 0.02em;
+        font-weight: 800;
+        font-size: 1.08rem;
+        letter-spacing: 0.03em;
         margin-bottom: 1rem;
-        box-shadow: 0 4px 15px rgba(5, 150, 105, 0.2);
+        box-shadow: 0 4px 15px rgba(5, 150, 105, 0.25);
     }
     .status-no {
-        background: linear-gradient(135deg, rgba(159, 18, 57, 0.4) 0%, rgba(244, 63, 94, 0.2) 100%);
+        background: linear-gradient(135deg, rgba(159, 18, 57, 0.5) 0%, rgba(244, 63, 94, 0.25) 100%);
         color: #fb7185 !important;
         border: 1.5px solid #e11d48;
         border-radius: 12px;
         padding: 0.85rem;
         text-align: center;
-        font-weight: 700;
-        font-size: 1.1rem;
-        letter-spacing: 0.02em;
+        font-weight: 800;
+        font-size: 1.08rem;
+        letter-spacing: 0.03em;
         margin-bottom: 1rem;
-        box-shadow: 0 4px 15px rgba(225, 29, 72, 0.2);
+        box-shadow: 0 4px 15px rgba(225, 29, 72, 0.25);
     }
 
-    /* Custom Metric Display Box */
-    .stat-box {
-        background: rgba(30, 41, 59, 0.6);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+    /* Financial Stat Box Card */
+    .stat-card {
         border-radius: 12px;
-        padding: 1rem;
+        padding: 1.1rem 0.9rem;
         text-align: center;
+        margin-bottom: 0.5rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
-    .stat-label {
-        font-size: 0.78rem;
+    .stat-card-green {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.35);
+    }
+    .stat-card-blue {
+        background: rgba(56, 189, 248, 0.1);
+        border: 1px solid rgba(56, 189, 248, 0.35);
+    }
+    .stat-card-indigo {
+        background: rgba(129, 140, 248, 0.1);
+        border: 1px solid rgba(129, 140, 248, 0.35);
+    }
+    .stat-card-title {
+        font-size: 0.75rem;
         color: #94a3b8;
-        font-weight: 600;
+        font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
+        letter-spacing: 0.06em;
         margin-bottom: 4px;
     }
-    .stat-val {
-        font-size: 1.5rem;
+    .stat-card-amount {
+        font-size: 1.55rem;
         font-weight: 800;
-        color: #38bdf8;
+        letter-spacing: -0.02em;
+        margin-bottom: 2px;
     }
-    .stat-sub {
-        font-size: 0.75rem;
-        color: #64748b;
-        margin-top: 2px;
+    .stat-card-sub {
+        font-size: 0.78rem;
+        font-weight: 600;
     }
 
-    /* Telemetry Pills */
+    /* Telemetry Pill */
     .telemetry-pill {
         display: inline-flex;
         align-items: center;
@@ -232,37 +260,21 @@ st.markdown(
         background-color: #0f172a !important;
         border: 1px solid rgba(255, 255, 255, 0.08) !important;
         border-radius: 14px !important;
-        padding: 1rem 1.25rem !important;
-        margin-bottom: 0.85rem !important;
+        padding: 1.15rem 1.35rem !important;
+        margin-bottom: 0.95rem !important;
         color: #f8fafc !important;
     }
 
-    /* Quick question cards */
-    .quick-chip {
-        background: rgba(30, 41, 59, 0.5);
-        border: 1px solid rgba(56, 189, 248, 0.2);
-        border-radius: 10px;
-        padding: 0.75rem 1rem;
-        color: #e2e8f0;
-        font-size: 0.9rem;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-    .quick-chip:hover {
-        background: rgba(56, 189, 248, 0.15);
-        border-color: #38bdf8;
-    }
-
-    /* Button styling */
+    /* Action Chip Buttons */
     .stButton > button {
         border-radius: 10px !important;
         font-weight: 600 !important;
-        border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        border: 1px solid rgba(255, 255, 255, 0.14) !important;
         transition: all 0.2s ease !important;
     }
     .stButton > button:hover {
         border-color: #38bdf8 !important;
-        box-shadow: 0 0 12px rgba(56, 189, 248, 0.3) !important;
+        box-shadow: 0 0 12px rgba(56, 189, 248, 0.35) !important;
     }
     </style>
     """,
@@ -508,8 +520,8 @@ def scheme_fit(
     )
 
     results["PMEGP"] = {
-        "scheme_title": "PMEGP (Central Scheme)",
-        "scheme_type": "Central Government · Ministry of MSME / KVIC",
+        "scheme_title": "PMEGP (Central Government Scheme)",
+        "scheme_type": "Government of India · Ministry of MSME / KVIC",
         "qualifies": pmegp_qualifies,
         "reasons": pmegp_reasons
         or [
@@ -520,7 +532,7 @@ def scheme_fit(
         "calculation": pmegp_calc if pmegp_qualifies else None,
     }
     results["CMEGP"] = {
-        "scheme_title": "CMEGP (Maharashtra Scheme)",
+        "scheme_title": "CMEGP (Maharashtra State Scheme)",
         "scheme_type": "Government of Maharashtra · Directorate of Industries",
         "qualifies": cmegp_qualifies,
         "reasons": cmegp_reasons
@@ -564,18 +576,18 @@ with st.sidebar:
         <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 0.5rem;">
             <div style="font-size: 2.2rem;">🌱</div>
             <div>
-                <h2 style="margin: 0; font-size: 1.4rem; font-weight: 800; color: #ffffff;">UdyamSathi</h2>
-                <div style="font-size: 0.75rem; color: #38bdf8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Maharashtra MSME AI</div>
+                <h2 style="margin: 0; font-size: 1.45rem; font-weight: 800; color: #ffffff;">UdyamSathi</h2>
+                <div style="font-size: 0.72rem; color: #38bdf8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;">Maharashtra MSME AI</div>
             </div>
         </div>
         """,
         unsafe_allow_html=True,
     )
-    st.caption("AI-Powered Scheme Discovery & Finance Advisory")
+    st.caption("Intelligent Scheme Discovery & Grounded Advisory")
 
     st.markdown("---")
     st.markdown(
-        "<div style='font-size: 0.85rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;'>🌐 API Connection</div>",
+        "<div style='font-size: 0.8rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px;'>🌐 API Connection</div>",
         unsafe_allow_html=True,
     )
 
@@ -608,21 +620,21 @@ with st.sidebar:
     if backend_ok:
         st.markdown(
             f"<div style='background: rgba(16, 185, 129, 0.15); border: 1px solid #059669; color: #34d399; "
-            f"padding: 6px 12px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; gap: 6px;'>"
-            f"🟢 <span>Online • Connected ({ping_ms:.0f} ms)</span></div>",
+            f"padding: 8px 12px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; gap: 8px;'>"
+            f"🟢 <span>Online • Render Cloud ({ping_ms:.0f} ms)</span></div>",
             unsafe_allow_html=True,
         )
     else:
         st.markdown(
             "<div style='background: rgba(245, 158, 11, 0.15); border: 1px solid #d97706; color: #fbbf24; "
-            "padding: 6px 12px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; gap: 6px;'>"
-            "🟡 <span>Container Waking / Local Policy Fallback Active</span></div>",
+            "padding: 8px 12px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; gap: 8px;'>"
+            "🟡 <span>Container Waking · Local Cache Active</span></div>",
             unsafe_allow_html=True,
         )
 
     st.markdown("---")
     st.markdown(
-        "<div style='font-size: 0.85rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em;'>💡 Quick Prompts</div>",
+        "<div style='font-size: 0.8rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px;'>💡 Quick Demo Questions</div>",
         unsafe_allow_html=True,
     )
     example_prompts = [
@@ -641,7 +653,16 @@ with st.sidebar:
         st.session_state.messages = []
         st.rerun()
 
-    st.caption("Built for Maharashtra MSME Development • CSE 2026")
+    st.markdown(
+        """
+        <div style="font-size: 0.72rem; color: #64748b; margin-top: 1.5rem; line-height: 1.5;">
+            <b>Project:</b> UdyamSathi (SJ-38)<br>
+            <b>Candidate:</b> Sameer Pradeep Jadhav<br>
+            <b>Sanjivani College of Engineering • 2026</b>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 # ==========================================
@@ -650,13 +671,14 @@ with st.sidebar:
 st.markdown(
     """
     <div class="hero">
-      <h1>🌱 UdyamSathi (उद्यमसाथी)</h1>
-      <p>Instant government scheme discovery, side-by-side PMEGP vs CMEGP qualification, and policy-grounded financial subsidy estimation.</p>
+      <div class="hero-portal-badge">🇮🇳 Official MSME Development & Finance Advisory Portal · Maharashtra</div>
+      <h1>🌱 UdyamSathi <span style="font-size: 1.6rem; font-weight: 500; color: #bae6fd;">(उद्यमसाथी)</span></h1>
+      <p>Grounded government scheme discovery, side-by-side PMEGP vs CMEGP qualification, and audited financial subsidy estimation with zero AI math hallucination.</p>
       <div class="hero-badges">
         <span class="hero-pill" style="border-color: rgba(52, 211, 153, 0.4); color: #34d399;">🏛️ 20 Official Policy Records</span>
-        <span class="hero-pill" style="border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;">🛡️ Zero AI Math (Audited Rule-Engine)</span>
+        <span class="hero-pill" style="border-color: rgba(56, 189, 248, 0.4); color: #38bdf8;">🛡️ Zero AI Math (Deterministic Rule-Engine)</span>
         <span class="hero-pill" style="border-color: rgba(192, 132, 252, 0.4); color: #c084fc;">⚡ &lt; 15ms Cache Latency</span>
-        <span class="hero-pill" style="border-color: rgba(251, 191, 36, 0.4); color: #fbbf24;">🎯 54 Pytest Test Suites</span>
+        <span class="hero-pill" style="border-color: rgba(251, 191, 36, 0.4); color: #fbbf24;">🎯 54 Verified Test Suites</span>
       </div>
     </div>
     """,
@@ -676,8 +698,8 @@ tab_fit, tab_chat, tab_directory = st.tabs([
 with tab_fit:
     st.markdown(
         """
-        <div style="margin-bottom: 1rem;">
-            <h3 style="margin-bottom: 0.2rem; font-size: 1.35rem;">⚖️ Side-by-Side Scheme Qualification & Capital Breakdown</h3>
+        <div style="margin-bottom: 1.25rem;">
+            <h3 style="margin-bottom: 0.2rem; font-size: 1.35rem; color: #ffffff;">⚖️ Side-by-Side Scheme Qualification & Capital Breakdown</h3>
             <p style="color: #94a3b8; font-size: 0.95rem; margin: 0;">
                 Evaluate your project simultaneously against the Prime Minister Employment Generation Programme (PMEGP)
                 and Chief Minister Employment Generation Programme (CMEGP).
@@ -687,9 +709,18 @@ with tab_fit:
         unsafe_allow_html=True,
     )
 
-    with st.container():
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-        col1, col2, col3 = st.columns([1, 1, 1.2])
+    # Clean input card using st.container(border=True)
+    with st.container(border=True):
+        st.markdown(
+            """
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 0.75rem;">
+                <span style="font-size: 1.15rem;">📝</span>
+                <span style="font-weight: 700; font-size: 1.05rem; color: #f8fafc;">Applicant & Project Parameters</span>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        col1, col2, col3 = st.columns([1, 1, 1.25])
 
         with col1:
             age = st.number_input(
@@ -737,8 +768,12 @@ with tab_fit:
                 help="Adjust to verify cap compliance and estimated subsidy amounts.",
             )
             cost_in_rupees = float(project_cost_lakh) * 100_000
-
-        st.markdown("</div>", unsafe_allow_html=True)
+            st.markdown(
+                f"<div style='font-size: 0.82rem; color: #38bdf8; font-weight: 600; text-align: right;'>"
+                f"Selected Capital: <b>₹{cost_in_rupees:,.0f}</b>"
+                f"</div>",
+                unsafe_allow_html=True,
+            )
 
     # Calculate real-time fit
     fit_data = scheme_fit(
@@ -754,28 +789,27 @@ with tab_fit:
     for col, (scheme_name, scheme_info) in zip(
         [res_col1, res_col2], fit_data.items(), strict=False
     ):
-        with col:
+        with col.container(border=True):
             title_text = scheme_info.get("scheme_title", scheme_name)
-            st.markdown('<div class="card">', unsafe_allow_html=True)
             st.markdown(
-                f"<h3 style='margin-bottom: 2px;'>{title_text}</h3>"
-                f"<div style='font-size: 0.8rem; color: #38bdf8; font-weight: 600; margin-bottom: 12px;'>{scheme_info['scheme_type']}</div>",
+                f"<h3 style='margin: 0 0 2px 0; font-size: 1.25rem;'>{title_text}</h3>"
+                f"<div style='font-size: 0.8rem; color: #38bdf8; font-weight: 600; margin-bottom: 14px;'>{scheme_info['scheme_type']}</div>",
                 unsafe_allow_html=True,
             )
 
             if scheme_info["qualifies"]:
                 st.markdown(
-                    '<div class="status-ok">✅ ELIGIBLE FOR SUBSIDY</div>',
+                    '<div class="status-ok">✅ ELIGIBLE FOR FINANCIAL SUBSIDY</div>',
                     unsafe_allow_html=True,
                 )
             else:
                 st.markdown(
-                    '<div class="status-no">❌ INELIGIBLE UNDER STATUTORY CRITERIA</div>',
+                    '<div class="status-no">❌ INELIGIBLE UNDER STATUTORY POLICY</div>',
                     unsafe_allow_html=True,
                 )
 
             st.markdown(
-                "<div style='font-weight: 700; color: #f1f5f9; font-size: 0.95rem; margin-bottom: 6px;'>Statutory Criteria Verification:</div>",
+                "<div style='font-weight: 700; color: #f1f5f9; font-size: 0.92rem; margin-bottom: 8px;'>Statutory Verification Checklist:</div>",
                 unsafe_allow_html=True,
             )
             for reason in scheme_info["reasons"]:
@@ -786,7 +820,7 @@ with tab_fit:
             if calc:
                 st.markdown("---")
                 st.markdown(
-                    "<div style='font-weight: 700; color: #38bdf8; font-size: 1.05rem; margin-bottom: 10px;'>💰 Financial Structure Breakdown</div>",
+                    "<div style='font-weight: 700; color: #38bdf8; font-size: 1rem; margin-bottom: 12px;'>💰 Capital & Subsidy Financial Structure</div>",
                     unsafe_allow_html=True,
                 )
 
@@ -798,10 +832,10 @@ with tab_fit:
                 with m1:
                     st.markdown(
                         f"""
-                        <div class="stat-box">
-                            <div class="stat-label">Govt. Subsidy</div>
-                            <div class="stat-val" style="color: #34d399;">₹{calc['subsidy_amount']:,.0f}</div>
-                            <div class="stat-sub">{sub_pct}% Margin Money</div>
+                        <div class="stat-card stat-card-green">
+                            <div class="stat-card-title">Govt. Subsidy</div>
+                            <div class="stat-card-amount" style="color: #34d399;">₹{calc['subsidy_amount']:,.0f}</div>
+                            <div class="stat-card-sub" style="color: #6ee7b7;">{sub_pct}% Margin Money</div>
                         </div>
                         """,
                         unsafe_allow_html=True,
@@ -809,10 +843,10 @@ with tab_fit:
                 with m2:
                     st.markdown(
                         f"""
-                        <div class="stat-box">
-                            <div class="stat-label">Own Equity</div>
-                            <div class="stat-val" style="color: #38bdf8;">₹{calc['own_contribution']:,.0f}</div>
-                            <div class="stat-sub">{own_pct}% Contribution</div>
+                        <div class="stat-card stat-card-blue">
+                            <div class="stat-card-title">Applicant Equity</div>
+                            <div class="stat-card-amount" style="color: #38bdf8;">₹{calc['own_contribution']:,.0f}</div>
+                            <div class="stat-card-sub" style="color: #7dd3fc;">{own_pct}% Own Funds</div>
                         </div>
                         """,
                         unsafe_allow_html=True,
@@ -820,23 +854,21 @@ with tab_fit:
                 with m3:
                     st.markdown(
                         f"""
-                        <div class="stat-box">
-                            <div class="stat-label">Bank Loan</div>
-                            <div class="stat-val" style="color: #818cf8;">₹{calc['bank_loan_amount']:,.0f}</div>
-                            <div class="stat-sub">{loan_pct}% Term Loan</div>
+                        <div class="stat-card stat-card-indigo">
+                            <div class="stat-card-title">Bank Term Loan</div>
+                            <div class="stat-card-amount" style="color: #a5b4fc;">₹{calc['bank_loan_amount']:,.0f}</div>
+                            <div class="stat-card-sub" style="color: #c7d2fe;">{loan_pct}% Bank Debt</div>
                         </div>
                         """,
                         unsafe_allow_html=True,
                     )
 
                 sub_ratio = calc["subsidy_amount"] / calc["project_cost"]
-                st.markdown("<div style='margin-top: 12px;'></div>", unsafe_allow_html=True)
+                st.markdown("<div style='margin-top: 10px;'></div>", unsafe_allow_html=True)
                 st.progress(
                     sub_ratio,
-                    text=f"Subsidy Distribution: {sub_pct}% Government Grant Coverage",
+                    text=f"Capital Distribution: {sub_pct}% Government Grant Coverage",
                 )
-
-            st.markdown("</div>", unsafe_allow_html=True)
 
 
 # ==========================================
@@ -845,8 +877,8 @@ with tab_fit:
 with tab_chat:
     st.markdown(
         """
-        <div style="margin-bottom: 0.75rem;">
-            <h3 style="margin-bottom: 0.2rem; font-size: 1.35rem;">💬 AI Policy Advisor & Grounded Q&A</h3>
+        <div style="margin-bottom: 1rem;">
+            <h3 style="margin-bottom: 0.2rem; font-size: 1.35rem; color: #ffffff;">💬 AI Policy Advisor & Grounded Q&A</h3>
             <p style="color: #94a3b8; font-size: 0.95rem; margin: 0;">
                 Ask queries regarding government circulars, eligibility conditions, educational criteria, or subsidy disbursement.
             </p>
@@ -866,6 +898,37 @@ with tab_chat:
 
     if "messages" not in st.session_state:
         st.session_state.messages = []
+
+    # If chat history is empty, show interactive quick-start cards
+    if not st.session_state.messages:
+        with st.container(border=True):
+            st.markdown(
+                """
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 0.5rem;">
+                    <span style="font-size: 1.2rem;">⚡</span>
+                    <span style="font-weight: 700; font-size: 1.05rem; color: #f8fafc;">Popular Demonstration Inquiries</span>
+                </div>
+                <div style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 1rem;">
+                    Click any scenario below to ask the policy advisor directly:
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+            q1, q2 = st.columns(2)
+            with q1:
+                if st.button("🌾 What is the PMEGP subsidy rate for rural women?", use_container_width=True, key="chip-1"):
+                    st.session_state["queued_prompt"] = "What is the PMEGP subsidy rate for rural women?"
+                    st.rerun()
+                if st.button("👨‍👩‍👧 Can a family apply for two different PMEGP businesses?", use_container_width=True, key="chip-2"):
+                    st.session_state["queued_prompt"] = "Can a family apply for two different PMEGP businesses?"
+                    st.rerun()
+            with q2:
+                if st.button("🏭 What is the maximum cost for a manufacturing unit under CMEGP?", use_container_width=True, key="chip-3"):
+                    st.session_state["queued_prompt"] = "What is the maximum cost for a manufacturing unit under CMEGP?"
+                    st.rerun()
+                if st.button("📊 What are the 2025 MSME micro enterprise limits?", use_container_width=True, key="chip-4"):
+                    st.session_state["queued_prompt"] = "What are the 2025 MSME micro enterprise limits?"
+                    st.rerun()
 
     # Display chat history
     for message in st.session_state.messages:
@@ -887,7 +950,7 @@ with tab_chat:
                                 f"Document: `{cit.get('source', 'unknown')}` | Page: `{cit.get('page', 1)}`"
                             )
 
-    # Handle queued prompt from sidebar or new chat input
+    # Handle queued prompt from sidebar/chips or new chat input
     user_input = st.chat_input("Ask a question about MSME schemes in Maharashtra...")
     if st.session_state.get("queued_prompt"):
         user_input = st.session_state.pop("queued_prompt")
@@ -1036,8 +1099,8 @@ with tab_chat:
 with tab_directory:
     st.markdown(
         """
-        <div style="margin-bottom: 0.75rem;">
-            <h3 style="margin-bottom: 0.2rem; font-size: 1.35rem;">📚 Official MSME Policy & Limits Directory</h3>
+        <div style="margin-bottom: 1rem;">
+            <h3 style="margin-bottom: 0.2rem; font-size: 1.35rem; color: #ffffff;">📚 Official MSME Policy & Limits Directory</h3>
             <p style="color: #94a3b8; font-size: 0.95rem; margin: 0;">
                 Browse verified policy records extracted directly from official Bank of Maharashtra and government notifications.
             </p>
@@ -1074,34 +1137,29 @@ with tab_directory:
     st.write(f"Showing **{len(filtered)}** verified official policy records:")
 
     for item in filtered:
-        with st.expander(f"📌 {item.get('scheme_name', 'Scheme Record')}"):
+        with st.container(border=True):
+            st.markdown(
+                f"<div style='display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;'>"
+                f"<span style='font-size: 1.15rem; font-weight: 800; color: #ffffff;'>📌 {item.get('scheme_name', 'Scheme Record')}</span>"
+                f"<span style='background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.3); color: #38bdf8; padding: 2px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700;'>"
+                f"{item.get('category', 'MSME Scheme')}</span>"
+                f"</div>",
+                unsafe_allow_html=True,
+            )
             c1, c2 = st.columns(2)
             with c1:
                 st.markdown(
-                    f"**Max Project Cost:** `{item.get('max_project_cost', 'N/A')}`"
-                )
-                st.markdown(
-                    f"**Subsidy (General):** `{item.get('subsidy_general', 'N/A')}`"
-                )
-                st.markdown(
-                    f"**Subsidy (Special):** `{item.get('subsidy_special', 'N/A')}`"
+                    f"• **Manufacturing Cap:** `₹{item.get('statutory_cap_manufacturing_inr', 0):,}`\n\n"
+                    f"• **Subsidy (General):** `{item.get('subsidy_general', 'N/A')}`\n\n"
+                    f"• **Subsidy (Special):** `{item.get('subsidy_special', 'N/A')}`"
                 )
             with c2:
                 st.markdown(
-                    f"**Applicant Contribution:** `{item.get('own_contribution', 'N/A')}`"
+                    f"• **Service Sector Cap:** `₹{item.get('statutory_cap_service_inr', 0):,}`\n\n"
+                    f"• **Applicant Contribution:** `{item.get('own_contribution', 'N/A')}`\n\n"
+                    f"• **Max Project Cost:** `{item.get('max_project_cost', 'N/A')}`"
                 )
-                st.markdown(
-                    f"**Category:** `{item.get('category', 'MSME Scheme')}`"
-                )
-                st.markdown(
-                    f"**Manufacturing Cap:** `₹{item.get('statutory_cap_manufacturing_inr', 0):,}`"
-                )
-                st.markdown(
-                    f"**Service Cap:** `₹{item.get('statutory_cap_service_inr', 0):,}`"
-                )
-            st.markdown("---")
-            st.markdown(f"**Description:**\n\n{item.get('description', 'N/A')}")
+            st.markdown(f"**Description:** {item.get('description', 'N/A')}")
             if item.get("eligibility"):
-                st.markdown(
-                    f"**Eligibility Details:**\n\n{item.get('eligibility')}"
-                )
+                with st.expander("🔍 View Official Eligibility Rules"):
+                    st.markdown(item.get("eligibility"))
