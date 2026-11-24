@@ -27,7 +27,7 @@ TOOLS_MODULE = importlib.util.module_from_spec(TOOLS_SPEC)
 TOOLS_SPEC.loader.exec_module(TOOLS_MODULE)
 margin_money_subsidy_calculator = TOOLS_MODULE.margin_money_subsidy_calculator
 
-FEEDBACK_PATH = Path("data/ui_feedback.jsonl")
+FEEDBACK_PATH = ROOT / "data" / "ui_feedback.jsonl"
 
 DEFAULT_API_URL = os.getenv(
     "UDYAMSAATHI_API_URL", "https://udyamsaathi-14cw.onrender.com"
@@ -1158,7 +1158,7 @@ with tab_directory:
             from app.smart_search import load_records
 
             all_records = load_records()
-    except (requests.RequestException, ValueError):
+    except (requests.RequestException, ValueError, Exception):  # noqa: BLE001
         from app.smart_search import load_records
 
         all_records = load_records()
